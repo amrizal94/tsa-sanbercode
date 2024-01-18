@@ -1,4 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
+import bcrypt from 'bcryptjs';
+import { v4 as uuidv4 } from 'uuid';
 import jwt from "jsonwebtoken"
 
 const prisma = new PrismaClient();
@@ -51,13 +53,40 @@ export const registerUser = async (req, res) => {
     });
     return res;
   }
+  const hash = bcrypt.hashSync('bacon', 8);
 
-  res.status(201);
-  res.json(
-    {
-      status: 'success',
-      message: 'User berhasil ditambahkan',
-    },
-  );
-  return res;
+
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        username,
+        password: hash,
+        code: uuidv4(),
+      }
+    });
+
+    res.status(201);
+    res.json(
+      {
+        status: 'success',
+        message: 'User berhasil ditambahkan',
+        data: user
+      },
+    );
+    return res;
+
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === 'P2002') {
+        const duplicate = (String(e.meta.target).includes("email")) ? "Email" : "Username";
+        res.status(400);
+        res.json({
+          status: 'fail',
+          message: `Gagal menambahkan user. ${duplicate} sudah digunakan`,
+        });
+        return res;
+      }
+    }
+  }
 }
