@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  username String @unique
+  password String
+  code     String @unique @default(uuid())
+  books    Book[]
+}
+
+model Book {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String
+  image_url    String    @default("https://picsum.photos/200/300")
+  release_year Int       @default(1980)
+  price        String
+  total_page   Int
+  thickness    Thickness @default(tebal)
+
+  author     User   @relation(fields: [authorCode], references: [code])
+  authorCode String
+}
+
+enum Thickness {
+  tipis
+  sedang
+  tebal
+}
