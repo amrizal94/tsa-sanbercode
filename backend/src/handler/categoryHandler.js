@@ -15,7 +15,7 @@ export const addCategory = async (req, res) => {
     return res;
   }
   try {
-    const category = await prisma.category.create({ data: { name } });
+    await prisma.category.create({ data: { name } });
     res.status(200).json({
       status: 'success',
       message: 'Category berhasil ditambahkan'
@@ -77,4 +77,29 @@ export const getCategoryByIdHandler = async (req, res) => {
     status: 'success',
     data: category
   })
+}
+
+export const editCategoryByIdHandler = async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  try {
+    await prisma.category.update({
+      where: { code: id },
+      data: { name },
+    })
+    return res.status(200).json({
+      status: 'success',
+      message: 'Category berhasil diperbarui',
+    })
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return res.status(400)
+          .json({
+            status: 'fail',
+            message: 'Gagal menambahkan user. Nama category sudah digunakan',
+          });
+      }
+    }
+  }
 }

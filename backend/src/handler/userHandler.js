@@ -61,7 +61,7 @@ export const registerUser = async (req, res) => {
     bcrypt.hash(password, salt, async function (err, hash) {
       // Store hash in your password DB.
       try {
-        const user = await prisma.user.create({
+        await prisma.user.create({
           data: {
             email,
             username,
@@ -83,11 +83,11 @@ export const registerUser = async (req, res) => {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {
           if (e.code === 'P2002') {
             const duplicate = (String(e.meta.target).includes("email")) ? "Email" : "Username";
-            res.status(400);
-            res.json({
-              status: 'fail',
-              message: `Gagal menambahkan user. ${duplicate} sudah digunakan`,
-            });
+            res.status(400)
+              .json({
+                status: 'fail',
+                message: `Gagal menambahkan user. ${duplicate} sudah digunakan`,
+              });
             return res;
           }
         }
