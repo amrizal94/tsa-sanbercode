@@ -101,8 +101,14 @@ export const editCategoryByIdHandler = async (req, res) => {
         return res.status(400)
           .json({
             status: 'fail',
-            message: 'Gagal menambahkan user. Nama category sudah digunakan',
+            message: 'Gagal memperbarui category. Nama category sudah digunakan',
           });
+      }
+      if (error.code === 'P2025') {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'Gagal memperbarui category. Category tidak ditemukan'
+        });
       }
     }
     return res.status(500).json({
