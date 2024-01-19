@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { login, registerUser } from './handler.js';
+import { login, registerUser, getBooks } from './handler.js';
+import { accessToken } from './middleware.js';
 
 const router = Router();
 
@@ -8,7 +9,9 @@ router.post('/users/register', registerUser)
 router.post('/users/login', login)
 
 // books router
-router.route('/books');
+router.use('/books', accessToken)
+  .route('/books')
+  .get(getBooks)
 
 // categories router
 router.route('/categories');

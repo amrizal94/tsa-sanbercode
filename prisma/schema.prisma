@@ -21,13 +21,13 @@ model User {
 
 model Book {
   id           Int       @id @default(autoincrement())
-  title        String
-  description  String
+  title        String    @default("untitled")
+  description  String    @default("undescribed")
   image_url    String    @default("https://picsum.photos/200/300")
   release_year Int       @default(1980)
-  price        String
-  total_page   Int
-  thickness    Thickness @default(tebal)
+  price        String    @default("0")
+  total_page   Int       @default(100)
+  thickness    Thickness @default(tipis)
 
   author     User   @relation(fields: [authorCode], references: [code])
   authorCode String
