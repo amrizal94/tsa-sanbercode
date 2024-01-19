@@ -28,13 +28,26 @@ model Book {
   price        String    @default("0")
   total_page   Int       @default(100)
   thickness    Thickness @default(tipis)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  author     User   @relation(fields: [authorCode], references: [code])
-  authorCode String
+  user         User     @relation(fields: [userCode], references: [code])
+  userCode     String
+  category     Category @relation(fields: [categoryCode], references: [code])
+  categoryCode String
 }
 
 enum Thickness {
   tipis
   sedang
   tebal
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  code      String   @unique @default(uuid())
+  Book      Book[]
 }
