@@ -1,6 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 import jwt from "jsonwebtoken"
 
 const prisma = new PrismaClient();
@@ -66,7 +65,6 @@ export const registerUser = async (req, res) => {
             email,
             username,
             password: hash,
-            code: uuidv4(),
           }
         });
 

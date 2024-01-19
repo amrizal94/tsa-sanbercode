@@ -11,14 +11,13 @@ router.post('/users/register', registerUser)
 router.post('/users/login', login)
 
 // categories router
-router.use('/books', accessToken)
+router.use('/categories', accessToken)
   .route('/categories')
   .post(ctgHandler.addCategory)
   .get(ctgHandler.getAllCategory)
 
 // categories router with parameters id
-router.use('/books', accessToken)
-  .route('/categories/:id')
+router.route('/categories/:id')
   .get(ctgHandler.getCategoryByIdHandler)
   .patch(ctgHandler.editCategoryByIdHandler)
   .put(ctgHandler.editCategoryByIdHandler)
