@@ -44,6 +44,9 @@ export const getAllCategory = async (req, res) => {
       name: true,
       createdAt: true,
       updatedAt: true
+    },
+    where: {
+      deleted: false
     }
   });
   const result = categories.map(({ code, ...category }) => ({
@@ -79,7 +82,7 @@ export const getCategoryByIdHandler = async (req, res) => {
   }
   res.status(200).json({
     status: 'success',
-    data: category
+    data: { category }
   })
 }
 
