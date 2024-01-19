@@ -20,6 +20,7 @@ router.route('/categories/:id')
   .get(ctgHandler.getCategoryByIdHandler)
   .patch(ctgHandler.editCategoryByIdHandler)
   .put(ctgHandler.editCategoryByIdHandler)
+  .delete(ctgHandler.deleteCategoryByIdHandler)
 
 // books router
 router.use('/books', accessToken)

@@ -30,6 +30,10 @@ export const addCategory = async (req, res) => {
         })
       }
     }
+    return res.status(500).json({
+      status: 'fail',
+      message: 'query error create category',
+    })
   }
 }
 
@@ -101,5 +105,39 @@ export const editCategoryByIdHandler = async (req, res) => {
           });
       }
     }
+    return res.status(500).json({
+      status: 'fail',
+      message: 'query error update category',
+    })
+  }
+}
+
+export const deleteCategoryByIdHandler = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.category.delete({
+      where: {
+        code: id,
+      },
+    })
+    return res.status(200).json({
+      status: 'success',
+      message: 'Category berhasil dihapus',
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'Gagal menghapus category. Category tidak ditemukan',
+          id
+        });
+      }
+    }
+    return res.status(500).json({
+      status: 'fail',
+      message: 'query error delete category',
+    })
   }
 }
