@@ -44,6 +44,9 @@ export const getAllCategory = async (req, res) => {
       name: true,
       createdAt: true,
       updatedAt: true
+    },
+    where: {
+      deleted: false
     }
   });
   const result = categories.map(({ code, ...category }) => ({
@@ -68,7 +71,7 @@ export const getCategoryByIdHandler = async (req, res) => {
       updatedAt: true,
     },
     where: {
-      code: id,
+      code: id, deleted: false,
     },
   })
   if (!category) {
@@ -79,7 +82,7 @@ export const getCategoryByIdHandler = async (req, res) => {
   }
   res.status(200).json({
     status: 'success',
-    data: category
+    data: { category }
   })
 }
 
@@ -88,7 +91,7 @@ export const editCategoryByIdHandler = async (req, res) => {
   const { name } = req.body;
   try {
     await prisma.category.update({
-      where: { code: id },
+      where: { code: id, deleted: false },
       data: { name },
     })
     return res.status(200).json({
@@ -101,8 +104,14 @@ export const editCategoryByIdHandler = async (req, res) => {
         return res.status(400)
           .json({
             status: 'fail',
-            message: 'Gagal menambahkan user. Nama category sudah digunakan',
+            message: 'Gagal memperbarui category. Nama category sudah digunakan',
           });
+      }
+      if (error.code === 'P2025') {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'Gagal memperbarui category. Category tidak ditemukan'
+        });
       }
     }
     return res.status(500).json({
@@ -116,10 +125,9 @@ export const deleteCategoryByIdHandler = async (req, res) => {
   const { id } = req.params;
 
   try {
-    await prisma.category.delete({
-      where: {
-        code: id,
-      },
+    await prisma.category.update({
+      where: { code: id, deleted: false },
+      data: { deleted: true },
     })
     return res.status(200).json({
       status: 'success',
@@ -130,8 +138,7 @@ export const deleteCategoryByIdHandler = async (req, res) => {
       if (error.code === 'P2025') {
         return res.status(404).json({
           status: 'fail',
-          message: 'Gagal menghapus category. Category tidak ditemukan',
-          id
+          message: 'Gagal menghapus category. Category tidak ditemukan'
         });
       }
     }
