@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { login, registerUser } from './handler/userHandler.js';
-import { getBooks } from './handler/bookHandler.js';
+import { addBooks } from './handler/bookHandler.js';
 import { accessToken } from './middleware.js';
 import * as ctgHandler from './handler/categoryHandler.js';
 
@@ -11,12 +11,14 @@ router.post('/users/register', registerUser)
 router.post('/users/login', login)
 
 // categories router
-router.route('/categories')
+router.use('/books', accessToken)
+  .route('/categories')
   .post(ctgHandler.addCategory)
   .get(ctgHandler.getAllCategory)
 
 // categories router with parameters id
-router.route('/categories/:id')
+router.use('/books', accessToken)
+  .route('/categories/:id')
   .get(ctgHandler.getCategoryByIdHandler)
   .patch(ctgHandler.editCategoryByIdHandler)
   .put(ctgHandler.editCategoryByIdHandler)
@@ -25,6 +27,6 @@ router.route('/categories/:id')
 // books router
 router.use('/books', accessToken)
   .route('/books')
-  .get(getBooks)
+  .post(addBooks)
 
 export default router;

@@ -3,11 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { config } from 'dotenv';
 import router from './router.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import bodyParser from 'body-parser';
 
 const app = express();
 
@@ -19,7 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 // for parsing form-encode
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+// app.use(express.urlencoded({ extended: true }));
 
 // app environment
 config();
