@@ -68,7 +68,7 @@ export const getCategoryByIdHandler = async (req, res) => {
       updatedAt: true,
     },
     where: {
-      code: id,
+      code: id, deleted: false,
     },
   })
   if (!category) {
