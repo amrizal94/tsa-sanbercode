@@ -15,6 +15,10 @@ router.route('/categories')
   .post(ctgHandler.addCategory)
   .get(ctgHandler.getAllCategory)
 
+// categories router with parameters id
+router.route('/categories/:id')
+  .get(ctgHandler.getCategoryByIdHandler)
+
 // books router
 router.use('/books', accessToken)
   .route('/books')

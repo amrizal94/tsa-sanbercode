@@ -53,3 +53,28 @@ export const getAllCategory = async (req, res) => {
     },
   })
 }
+
+export const getCategoryByIdHandler = async (req, res) => {
+  const { id } = req.params;
+
+  const category = await prisma.category.findUnique({
+    select: {
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    where: {
+      code: id,
+    },
+  })
+  if (!category) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Category yang dicari tidak ada'
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: category
+  })
+}
