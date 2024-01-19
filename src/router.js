@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { registerUser } from './handler.js';
+import { login, registerUser } from './handler.js';
 
 const router = Router();
 
 // users router
 router.post('/users/register', registerUser)
+router.post('/users/login', login)
 
 // books router
 router.route('/books');

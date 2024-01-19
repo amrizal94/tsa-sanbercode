@@ -9,7 +9,12 @@ const app = express();
 // app middleware
 app.use(morgan('tiny'));
 app.use(cors());
+
+//for parsing application/json
 app.use(express.json());
+
+// for parsing form-encode
+app.use(express.urlencoded({ extended: true }));
 
 // app environment
 config();
