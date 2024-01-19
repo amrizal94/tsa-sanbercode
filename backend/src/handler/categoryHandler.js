@@ -88,7 +88,7 @@ export const editCategoryByIdHandler = async (req, res) => {
   const { name } = req.body;
   try {
     await prisma.category.update({
-      where: { code: id },
+      where: { code: id, deleted: false },
       data: { name },
     })
     return res.status(200).json({
