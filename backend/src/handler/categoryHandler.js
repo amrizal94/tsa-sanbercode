@@ -116,10 +116,9 @@ export const deleteCategoryByIdHandler = async (req, res) => {
   const { id } = req.params;
 
   try {
-    await prisma.category.delete({
-      where: {
-        code: id,
-      },
+    await prisma.category.update({
+      where: { code: id, deleted: false },
+      data: { deleted: true },
     })
     return res.status(200).json({
       status: 'success',
@@ -130,8 +129,7 @@ export const deleteCategoryByIdHandler = async (req, res) => {
       if (error.code === 'P2025') {
         return res.status(404).json({
           status: 'fail',
-          message: 'Gagal menghapus category. Category tidak ditemukan',
-          id
+          message: 'Gagal menghapus category. Category tidak ditemukan'
         });
       }
     }
