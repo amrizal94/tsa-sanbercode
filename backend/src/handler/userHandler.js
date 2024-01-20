@@ -76,7 +76,7 @@ export const registerUser = async (req, res) => {
         }
         return res.status(500).json({
           status: 'fail',
-          message: 'query error create user',
+          message: 'query create user error',
         })
       }
     });

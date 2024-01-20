@@ -32,7 +32,7 @@ export const addCategory = async (req, res) => {
     }
     return res.status(500).json({
       status: 'fail',
-      message: 'query error create category',
+      message: 'query create category error',
     })
   }
 }
@@ -112,7 +112,7 @@ export const editCategoryByIdHandler = async (req, res) => {
     }
     return res.status(500).json({
       status: 'fail',
-      message: 'query error update category',
+      message: 'query update category error',
     })
   }
 }
@@ -134,13 +134,13 @@ export const deleteCategoryByIdHandler = async (req, res) => {
       if (error.code === 'P2025') {
         return res.status(404).json({
           status: 'fail',
-          message: 'Gagal menghapus category. Category tidak ditemukan'
+          message: 'Gagal menghapus category. ID category tidak ditemukan'
         });
       }
     }
     return res.status(500).json({
       status: 'fail',
-      message: 'query error delete category',
+      message: 'query delete category error',
     })
   }
 }
