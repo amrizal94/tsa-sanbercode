@@ -106,7 +106,7 @@ export const editCategoryByIdHandler = async (req, res) => {
       if (error.code === 'P2025') {
         return res.status(404).json({
           status: 'fail',
-          message: 'Gagal memperbarui category. Category tidak ditemukan'
+          message: 'Gagal memperbarui category. ID category tidak ditemukan'
         });
       }
     }

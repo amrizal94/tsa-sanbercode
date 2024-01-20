@@ -29,4 +29,7 @@ router.use('/books', accessToken, checkUser)
   .post(bookHandler.addBookHandler)
   .get(bookHandler.getAllBooksHandler)
 
+router.route('/books/:id')
+  .patch(bookHandler.editBookByIdHandler)
+
 export default router;
