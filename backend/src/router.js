@@ -31,5 +31,7 @@ router.use('/books', accessToken, checkUser)
 
 router.route('/books/:id')
   .patch(bookHandler.editBookByIdHandler)
+  .put(bookHandler.editBookByIdHandler)
+  .delete(bookHandler.deletedBookByIdHandler)
 
 export default router;

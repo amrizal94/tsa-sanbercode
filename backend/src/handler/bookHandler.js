@@ -123,7 +123,7 @@ export const addBookHandler = (req, res) => {
       console.log(error);
       return res.status(500).json({
         status: 'fail',
-        message: 'query error create book',
+        message: 'query create book error',
       })
     }
   })
@@ -188,7 +188,7 @@ export const editBookByIdHandler = (req, res) => {
       }
     }
     try {
-      const updateBook = await prisma.book.update({
+      await prisma.book.update({
         where: { code: id, deleted: false },
         data: {
           title,
@@ -217,7 +217,7 @@ export const editBookByIdHandler = (req, res) => {
       }
       return res.status(500).json({
         status: 'fail',
-        message: 'query error update book',
+        message: 'query update book error',
       })
     }
 
@@ -254,3 +254,30 @@ export const getAllBooksHandler = async (req, res) => {
     }
   })
 };
+
+export const deletedBookByIdHandler = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.book.update({
+      where: { code: id, deleted: false },
+      data: { deleted: true }
+    });
+    return res.status(200).json({
+      status: 'success',
+      message: 'Book berhasil dihapus'
+    })
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'Gagal menghapus book. ID book tidak ditemukan'
+        });
+      }
+    }
+    return res.status(500).json({
+      status: 'fail',
+      message: 'query delete book error'
+    })
+  }
+}
