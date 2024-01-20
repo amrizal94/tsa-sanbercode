@@ -15,22 +15,24 @@ model User {
   email    String @unique
   username String @unique
   password String
+  code     String @unique @default(uuid())
 }
 
 model Book {
-  id          Int       @id @default(autoincrement())
-  title       String    @default("untitled")
-  description String    @default("undescribed")
-  imageUrl    String    @default("https://picsum.photos/200/300")
-  releaseYear Int       @default(1980)
-  price       String    @default("0")
-  totalPage   Int       @default(100)
-  thickness   Thickness @default(tipis)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           Int       @id @default(autoincrement())
+  title        String    @default("untitled")
+  description  String    @default("undescribed")
+  image_url    String    @default("https://picsum.photos/200/300")
+  release_year Int       @default(1980)
+  price        String    @default("0")
+  total_page   Int       @default(100)
+  thickness    Thickness @default(tipis)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  code         String    @unique @default(uuid())
 
-  category     Category @relation(fields: [categoryCode], references: [code])
-  categoryCode String
+  category      Category @relation(fields: [category_code], references: [code])
+  category_code String
 }
 
 enum Thickness {
@@ -40,11 +42,11 @@ enum Thickness {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deleted   Boolean  @default(false)
-  code      String   @unique @default(uuid())
-  Book      Book[]
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted    Boolean  @default(false)
+  code       String   @unique @default(uuid())
+  Book       Book[]
 }

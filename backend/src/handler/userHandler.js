@@ -119,6 +119,7 @@ export const login = async (req, res) => {
     select: {
       id: true,
       password: true,
+      code: true
     },
   })
 
@@ -137,7 +138,8 @@ export const login = async (req, res) => {
     if (result) {
       const secret = process.env.JWT_SECRET_KEY || 'secret'
       const expiresIn = 60 * 60 * 1
-      const token = jwt.sign(user, secret, { expiresIn });
+      const { id, code } = user
+      const token = jwt.sign({ id, code }, secret, { expiresIn });
       res.status(200)
         .json({
           status: 'success',

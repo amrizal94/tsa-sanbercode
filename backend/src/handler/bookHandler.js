@@ -31,7 +31,7 @@ const upload = multer({
 
 const uploadSingleImage = upload.single('image');
 
-export const addBooks = (req, res) => {
+export const addBookHandler = (req, res) => {
   uploadSingleImage(req, res, async (error) => {
     if (error) {
       if (req.statusCode === 415) {
@@ -46,7 +46,6 @@ export const addBooks = (req, res) => {
       })
     }
     const { title, description, release_year, price, total_page, category_id } = req.body;
-    console.log(!isNaN(release_year))
     if (isNaN(release_year) || release_year < 1980 || release_year > 2021) {
       return res.status(404).json({
         status: 'fail',
@@ -94,6 +93,7 @@ export const addBooks = (req, res) => {
         code: category_id, deleted: false,
       },
     })
+
     if (!category) {
       return res.status(404).json({
         status: 'fail',
@@ -106,10 +106,10 @@ export const addBooks = (req, res) => {
         data: {
           title,
           description,
-          release_year,
+          release_year: parseInt(release_year),
           price,
-          total_page,
-          categoryCode: category_id,
+          total_page: parseInt(total_page),
+          category_code: category_id,
           thickness,
           image_url: imageUrl,
         }
@@ -119,6 +119,7 @@ export const addBooks = (req, res) => {
         message: 'Book berhasil ditambahkan'
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: 'fail',
         message: 'query error create book',
@@ -126,3 +127,29 @@ export const addBooks = (req, res) => {
     }
   })
 }
+export const getAllBooksHandler = async (req, res) => {
+  const books = await prisma.book.findMany({
+    select: {
+      code: true,
+      title: true,
+      description: true,
+      image_url: true,
+      release_year: true,
+      price: true,
+      total_page: true,
+      thickness: true,
+    }
+  })
+
+  const result = books.map(({ code, ...book }) => ({
+    id: code,
+    ...book,
+  }));
+
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      books: result,
+    }
+  })
+};

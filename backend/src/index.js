@@ -3,7 +3,6 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { config } from 'dotenv';
 import router from './router.js';
-import bodyParser from 'body-parser';
 
 const app = express();
 
@@ -15,10 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // for parsing form-encode
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 // app environment
 config();
