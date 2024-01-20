@@ -225,10 +225,10 @@ export const editBookByIdHandler = (req, res) => {
 }
 
 export const getAllBooksHandler = async (req, res) => {
+  const { id } = req.params;
+  const where = (id) ? { category_code: id, deleted: false } : { deleted: false };
   const books = await prisma.book.findMany({
-    where: {
-      deleted: false,
-    },
+    where: where,
     select: {
       code: true,
       title: true,
@@ -238,15 +238,24 @@ export const getAllBooksHandler = async (req, res) => {
       price: true,
       total_page: true,
       thickness: true,
+      category: {
+        select: {
+          code: true,
+          name: true
+        }
+      },
     }
   })
 
-  const result = books.map(({ code, image_url, ...book }) => ({
+  const result = books.map(({ code, image_url, category, ...book }) => ({
     id: code,
-    image_url: `${req.protocol}://${req.get('host')}/uploads/${image_url}`,
     ...book,
+    image_url: `${req.protocol}://${req.get('host')}/uploads/${image_url}`,
+    category: {
+      id: category.code,
+      name: category.name
+    }
   }));
-
   return res.status(200).json({
     status: 'success',
     data: {
