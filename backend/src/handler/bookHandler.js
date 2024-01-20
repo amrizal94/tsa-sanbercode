@@ -225,33 +225,70 @@ export const editBookByIdHandler = (req, res) => {
 }
 
 export const getAllBooksHandler = async (req, res) => {
-  const { sortByTitle, minYear, maxPage } = req.query;
+  let { sortByTitle, minYear, maxYear, minPage, maxPage, title } = req.query;
+  const { id } = req.params;
+  const setSortByTitle = { sortByTitle } ? { title: sortByTitle } : {};
+  let where = (id) ? { category_code: id, deleted: false } : { deleted: false };
+
   if (sortByTitle && sortByTitle !== 'asc' && sortByTitle !== 'desc') {
     return res.status(404).json({
       status: 'fail',
       message: `Gagal sorting book by title. mohon isi query sortByTitle dengan 'asc' atau 'desc'`
     });
   }
-  const setSortByTitle = { sortByTitle } ? { title: sortByTitle } : {};
-  const { id } = req.params;
-  let where = (id) ? { category_code: id, deleted: false } : { deleted: false };
-  if (minYear) {
-    if (isNaN(minYear)) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Gagal filtering book dengan minYear. Nilai minYear harus berupa angka'
-      })
-    }
-    where = { ...where, release_year: { gte: parseInt(minYear) } }
+
+  if (minYear && isNaN(minYear)) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Gagal filtering book dengan minYear. Nilai minYear harus berupa angka'
+    })
   }
-  if (maxPage) {
-    if (isNaN(maxPage)) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Gagal filtering book dengan maxPage. Nilai maxPage harus berupa angka'
-      })
-    }
-    where = { ...where, total_page: { lte: parseInt(maxPage) } }
+  minYear = parseInt(minYear)
+  where = { ...where, release_year: { gte: minYear } }
+
+  if (maxYear && isNaN(maxYear)) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Gagal filtering book dengan maxYear. Nilai maxYear harus berupa angka'
+    })
+  }
+  maxYear = parseInt(maxYear)
+  where = { ...where, release_year: { lte: maxYear } }
+
+  if (minYear && maxYear && (minYear > maxYear)) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Gagal filtering book dengan tahun. Nilai maxYear harus lebih besar dari minYear'
+    })
+  }
+
+  if (minPage && isNaN(minPage)) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Gagal filtering book dengan minPage. Nilai minPage harus berupa angka'
+    })
+  }
+  minPage = parseInt(minPage)
+  where = { ...where, total_page: { gte: minPage } }
+
+  if (maxPage && isNaN(maxPage)) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Gagal filtering book dengan maxPage. Nilai maxPage harus berupa angka'
+    })
+  }
+  maxPage = parseInt(maxPage)
+  where = { ...where, total_page: { lte: maxPage } }
+
+  if (minPage && maxPage && (minPage > maxPage)) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Gagal filtering book dengan page. Nilai maxPage harus lebih besar dari minPage'
+    })
+  }
+
+  if (title) {
+    where = { ...where, title: { contains: title } }
   }
 
   const books = await prisma.book.findMany({
