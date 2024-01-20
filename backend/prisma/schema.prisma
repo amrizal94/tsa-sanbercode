@@ -22,13 +22,14 @@ model Book {
   id           Int       @id @default(autoincrement())
   title        String    @default("untitled")
   description  String    @default("undescribed")
-  image_url    String    @default("https://picsum.photos/200/300")
+  image_url    String    @default("image-not-found.jpg")
   release_year Int       @default(1980)
   price        String    @default("0")
   total_page   Int       @default(100)
   thickness    Thickness @default(tipis)
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
+  deleted      Boolean   @default(false)
   code         String    @unique @default(uuid())
 
   category      Category @relation(fields: [category_code], references: [code])

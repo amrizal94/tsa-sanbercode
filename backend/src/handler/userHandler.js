@@ -3,21 +3,6 @@ import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken"
 
 const prisma = new PrismaClient();
-// export const getAllUsers = async (req, res) => {
-//   const users = await prisma.user.findMany({
-//     select: {
-//       username: true,
-//       email: true,
-//       code: true,
-//     }
-//   });
-//   const result = users.map(({ code, ...user }) => ({
-//     id: code,
-//     ...user,
-//   }));
-//   res.send(result);
-// }
-
 export const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
