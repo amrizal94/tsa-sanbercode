@@ -226,6 +226,9 @@ export const editBookByIdHandler = (req, res) => {
 
 export const getAllBooksHandler = async (req, res) => {
   const books = await prisma.book.findMany({
+    where: {
+      deleted: false,
+    },
     select: {
       code: true,
       title: true,
