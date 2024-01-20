@@ -16,7 +16,6 @@ model User {
   username String @unique
   password String
   code     String @unique @default(uuid())
-  books    Book[]
 }
 
 model Book {
@@ -28,13 +27,12 @@ model Book {
   price        String    @default("0")
   total_page   Int       @default(100)
   thickness    Thickness @default(tipis)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  code         String    @unique @default(uuid())
 
-  user         User     @relation(fields: [userCode], references: [code])
-  userCode     String
-  category     Category @relation(fields: [categoryCode], references: [code])
-  categoryCode String
+  category      Category @relation(fields: [category_code], references: [code])
+  category_code String
 }
 
 enum Thickness {
@@ -44,11 +42,11 @@ enum Thickness {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deleted   Boolean  @default(false)
-  code      String   @unique @default(uuid())
-  Book      Book[]
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted    Boolean  @default(false)
+  code       String   @unique @default(uuid())
+  Book       Book[]
 }

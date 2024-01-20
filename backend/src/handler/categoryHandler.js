@@ -42,8 +42,6 @@ export const getAllCategory = async (req, res) => {
     select: {
       code: true,
       name: true,
-      createdAt: true,
-      updatedAt: true
     },
     where: {
       deleted: false
@@ -67,8 +65,6 @@ export const getCategoryByIdHandler = async (req, res) => {
   const category = await prisma.category.findUnique({
     select: {
       name: true,
-      createdAt: true,
-      updatedAt: true,
     },
     where: {
       code: id, deleted: false,

@@ -1,6 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 import jwt from "jsonwebtoken"
 
 const prisma = new PrismaClient();
@@ -66,7 +65,6 @@ export const registerUser = async (req, res) => {
             email,
             username,
             password: hash,
-            code: uuidv4(),
           }
         });
 
@@ -121,6 +119,7 @@ export const login = async (req, res) => {
     select: {
       id: true,
       password: true,
+      code: true
     },
   })
 
@@ -139,7 +138,8 @@ export const login = async (req, res) => {
     if (result) {
       const secret = process.env.JWT_SECRET_KEY || 'secret'
       const expiresIn = 60 * 60 * 1
-      const token = jwt.sign(user, secret, { expiresIn });
+      const { id, code } = user
+      const token = jwt.sign({ id, code }, secret, { expiresIn });
       res.status(200)
         .json({
           status: 'success',

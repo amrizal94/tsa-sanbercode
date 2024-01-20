@@ -1,17 +1,18 @@
 import { Router } from 'express';
 import { login, registerUser } from './handler/userHandler.js';
-import { getBooks } from './handler/bookHandler.js';
-import { accessToken } from './middleware.js';
+import * as bookHandler from './handler/bookHandler.js';
+import { accessToken, checkUser } from './middleware.js';
 import * as ctgHandler from './handler/categoryHandler.js';
 
 const router = Router();
 
 // users router
-router.post('/users/register', registerUser)
+router.post('/users/register', registerUser, checkUser)
 router.post('/users/login', login)
 
 // categories router
-router.route('/categories')
+router.use('/categories', accessToken, checkUser)
+  .route('/categories')
   .post(ctgHandler.addCategory)
   .get(ctgHandler.getAllCategory)
 
@@ -23,8 +24,9 @@ router.route('/categories/:id')
   .delete(ctgHandler.deleteCategoryByIdHandler)
 
 // books router
-router.use('/books', accessToken)
+router.use('/books', accessToken, checkUser)
   .route('/books')
-  .get(getBooks)
+  .post(bookHandler.addBookHandler)
+  .get(bookHandler.getAllBooksHandler)
 
 export default router;
