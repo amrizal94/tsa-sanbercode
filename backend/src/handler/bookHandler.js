@@ -237,23 +237,27 @@ export const getAllBooksHandler = async (req, res) => {
     });
   }
 
-  if (minYear && isNaN(minYear)) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Gagal filtering book dengan minYear. Nilai minYear harus berupa angka'
-    })
+  if (minYear) {
+    if (isNaN(minYear)) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Gagal filtering book dengan minYear. Nilai minYear harus berupa angka'
+      })
+    }
+    minYear = parseInt(minYear)
+    where = { ...where, release_year: { gte: minYear } }
   }
-  minYear = parseInt(minYear)
-  where = { ...where, release_year: { gte: minYear } }
 
-  if (maxYear && isNaN(maxYear)) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Gagal filtering book dengan maxYear. Nilai maxYear harus berupa angka'
-    })
+  if (maxYear) {
+    if (isNaN(maxYear)) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Gagal filtering book dengan maxYear. Nilai maxYear harus berupa angka'
+      })
+    }
+    maxYear = parseInt(maxYear)
+    where = { ...where, release_year: { lte: maxYear } }
   }
-  maxYear = parseInt(maxYear)
-  where = { ...where, release_year: { lte: maxYear } }
 
   if (minYear && maxYear && (minYear > maxYear)) {
     return res.status(404).json({
@@ -262,23 +266,27 @@ export const getAllBooksHandler = async (req, res) => {
     })
   }
 
-  if (minPage && isNaN(minPage)) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Gagal filtering book dengan minPage. Nilai minPage harus berupa angka'
-    })
+  if (minPage) {
+    if (isNaN(minPage)) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Gagal filtering book dengan minPage. Nilai minPage harus berupa angka'
+      })
+    }
+    minPage = parseInt(minPage)
+    where = { ...where, total_page: { gte: minPage } }
   }
-  minPage = parseInt(minPage)
-  where = { ...where, total_page: { gte: minPage } }
 
-  if (maxPage && isNaN(maxPage)) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Gagal filtering book dengan maxPage. Nilai maxPage harus berupa angka'
-    })
+  if (maxPage) {
+    if (isNaN(maxPage)) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Gagal filtering book dengan maxPage. Nilai maxPage harus berupa angka'
+      })
+    }
+    maxPage = parseInt(maxPage)
+    where = { ...where, total_page: { lte: maxPage } }
   }
-  maxPage = parseInt(maxPage)
-  where = { ...where, total_page: { lte: maxPage } }
 
   if (minPage && maxPage && (minPage > maxPage)) {
     return res.status(404).json({
