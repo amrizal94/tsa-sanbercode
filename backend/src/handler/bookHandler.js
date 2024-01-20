@@ -225,10 +225,37 @@ export const editBookByIdHandler = (req, res) => {
 }
 
 export const getAllBooksHandler = async (req, res) => {
+  const { sortByTitle, minYear, maxPage } = req.query;
+  if (sortByTitle && sortByTitle !== 'asc' && sortByTitle !== 'desc') {
+    return res.status(404).json({
+      status: 'fail',
+      message: `Gagal sorting book by title. mohon isi query sortByTitle dengan 'asc' atau 'desc'`
+    });
+  }
+  const setSortByTitle = { sortByTitle } ? { title: sortByTitle } : {};
+  const { id } = req.params;
+  let where = (id) ? { category_code: id, deleted: false } : { deleted: false };
+  if (minYear) {
+    if (isNaN(minYear)) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Gagal filtering book dengan minYear. Nilai minYear harus berupa angka'
+      })
+    }
+    where = { ...where, release_year: { gte: parseInt(minYear) } }
+  }
+  if (maxPage) {
+    if (isNaN(maxPage)) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Gagal filtering book dengan maxPage. Nilai maxPage harus berupa angka'
+      })
+    }
+    where = { ...where, total_page: { lte: parseInt(maxPage) } }
+  }
+
   const books = await prisma.book.findMany({
-    where: {
-      deleted: false,
-    },
+    where: where,
     select: {
       code: true,
       title: true,
@@ -238,15 +265,25 @@ export const getAllBooksHandler = async (req, res) => {
       price: true,
       total_page: true,
       thickness: true,
-    }
+      category: {
+        select: {
+          code: true,
+          name: true
+        }
+      },
+    },
+    orderBy: setSortByTitle,
   })
 
-  const result = books.map(({ code, image_url, ...book }) => ({
+  const result = books.map(({ code, image_url, category, ...book }) => ({
     id: code,
-    image_url: `${req.protocol}://${req.get('host')}/uploads/${image_url}`,
     ...book,
+    image_url: `${req.protocol}://${req.get('host')}/uploads/${image_url}`,
+    category: {
+      id: category.code,
+      name: category.name
+    }
   }));
-
   return res.status(200).json({
     status: 'success',
     data: {
