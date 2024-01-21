@@ -47,20 +47,16 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
-      const data = {
+    async handleSubmit() {
+      const response = await axios.post("users/register", {
         username: this.username,
         email: this.email,
         password: this.password,
-      };
-      axios
-        .post(`${process.env.VUE_APP_API_HOST}/users/register`, data)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      });
+      if (response.status == 201) {
+        this.$router.push("/login");
+      }
+      localStorage.setItem("token", response.data.token);
     },
   },
 };

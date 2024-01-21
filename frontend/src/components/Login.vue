@@ -4,19 +4,20 @@
       Sign In
     </h1>
     <form
-      action=""
-      method="post"
+      @submit.prevent="handleSubmit"
       class="p-5 box-border flex flex-col justify-center gap-2"
     >
       <input
         type="text"
         placeholder="Username"
         class="input input-bordered w-full"
+        v-model="username"
       />
       <input
         type="password"
         placeholder="Password"
         class="input input-bordered w-full"
+        v-model="password"
       />
       <button class="btn w-full">Sign In</button>
       <div class="label">
@@ -29,8 +30,24 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   name: "Login",
+  data() {
+    return {
+      username: "",
+      password: "",
+    };
+  },
+  methods: {
+    async handleSubmit() {
+      const response = await axios.post("users/login", {
+        username: this.username,
+        password: this.password,
+      });
+      console.log(response);
+    },
+  },
 };
 </script>
 <style lang=""></style>
