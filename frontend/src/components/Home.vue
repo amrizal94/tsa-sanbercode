@@ -8,11 +8,7 @@ import axios from "axios";
 export default {
   name: "Home",
   async created() {
-    const response = await axios.get("books", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
+    const response = await axios.get("books");
     console.log(response);
     console.log(localStorage.getItem("token"));
   },
