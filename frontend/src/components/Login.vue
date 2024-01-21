@@ -31,9 +31,13 @@
 </template>
 <script>
 import axios from "axios";
+import { mapGetters } from "vuex";
 import Swal from "sweetalert2";
 export default {
   name: "Login",
+  computed: {
+    ...mapGetters(["books"]),
+  },
   data() {
     return {
       username: "",
@@ -55,7 +59,16 @@ export default {
           timer: 1500,
         });
         localStorage.setItem("token", response.data.token);
-        this.$router.push("/");
+        try {
+          const response = await axios.get("books");
+          this.$store.dispatch("books", response.data.data.books);
+          this.$router.push("/");
+        } catch (err) {
+          if (err.response.status === 401) {
+            delete axios.defaults.headers.common["Authorization"];
+            localStorage.removeItem("token");
+          }
+        }
       } catch (error) {
         Swal.fire({
           title: error.response.data.message,
