@@ -47,23 +47,28 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        const response = await axios.post("users/login", {
+        const responseUser = await axios.post("users/login", {
           username: this.username,
           password: this.password,
         });
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Sign in success",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", responseUser.data.token);
         try {
-          const response = await axios.get("books");
+          const response = await axios.get("books", {
+            headers: {
+              Authorization: "Bearer " + responseUser.data.token,
+            },
+          });
           this.$store.dispatch("books", response.data.data.books);
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Sign in success",
+            showConfirmButton: false,
+            timer: 1500,
+          });
           this.$router.push("/");
         } catch (err) {
+          console.log("Error");
           if (err.response.status === 401) {
             delete axios.defaults.headers.common["Authorization"];
             localStorage.removeItem("token");

@@ -54,9 +54,9 @@
             <td>{{ book.price }}</td>
             <td>{{ book.total_page }}</td>
             <td>{{ book.category.name }}</td>
-            <td class="flex gap-5 items-center">
-              <v-icon name="co-trash" scale="1.5" />
-              <v-icon name="px-edit-box" scale="1.5" />
+            <td>
+              <v-icon name="co-trash" scale="1.5" class="p-1 box-content" />
+              <v-icon name="px-edit-box" scale="1.5" class="p-1 box-content" />
             </td>
           </tr>
         </tbody>
