@@ -45,7 +45,10 @@ export default {
         username: this.username,
         password: this.password,
       });
-      console.log(response);
+      if (response.status == 200) {
+        localStorage.setItem("token", response.data.token);
+        this.$router.push("/");
+      }
     },
   },
 };

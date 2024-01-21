@@ -56,7 +56,6 @@ export default {
       if (response.status == 201) {
         this.$router.push("/login");
       }
-      localStorage.setItem("token", response.data.token);
     },
   },
 };
