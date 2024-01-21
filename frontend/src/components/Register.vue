@@ -36,6 +36,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   name: "Register",
   data() {
@@ -52,7 +53,14 @@ export default {
         email: this.email,
         password: this.password,
       };
-      console.log(data);
+      axios
+        .post(`${process.env.VUE_APP_API_HOST}/users/register`, data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
