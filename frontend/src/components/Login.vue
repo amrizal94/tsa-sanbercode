@@ -31,6 +31,7 @@
 </template>
 <script>
 import axios from "axios";
+import Swal from "sweetalert2";
 export default {
   name: "Login",
   data() {
@@ -41,13 +42,27 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      const response = await axios.post("users/login", {
-        username: this.username,
-        password: this.password,
-      });
-      if (response.status == 200) {
+      try {
+        const response = await axios.post("users/login", {
+          username: this.username,
+          password: this.password,
+        });
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Sign in success",
+          showConfirmButton: false,
+          timer: 1500,
+        });
         localStorage.setItem("token", response.data.token);
         this.$router.push("/");
+      } catch (error) {
+        Swal.fire({
+          title: error.response.data.message,
+          text: "Do you want to continue",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
       }
     },
   },

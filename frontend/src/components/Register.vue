@@ -37,6 +37,7 @@
 </template>
 <script>
 import axios from "axios";
+import Swal from "sweetalert2";
 export default {
   name: "Register",
   data() {
@@ -48,13 +49,27 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      const response = await axios.post("users/register", {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      });
-      if (response.status == 201) {
+      try {
+        const response = await axios.post("users/register", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
         this.$router.push("/login");
+      } catch (error) {
+        Swal.fire({
+          title: error.response.data.message,
+          text: "Do you want to continue",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
       }
     },
   },
