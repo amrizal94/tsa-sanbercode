@@ -5,8 +5,12 @@
     </div>
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1">
-        <li class="bg-slate-700 mx-2 hover:bg-gray-500"><a>Sign Up</a></li>
-        <li class="bg-slate-700 mx-2 hover:bg-gray-500"><a>Sign In</a></li>
+        <li class="bg-slate-700 mx-2 hover:bg-gray-500">
+          <router-link to="/register">Sign Up</router-link>
+        </li>
+        <li class="bg-slate-700 mx-2 hover:bg-gray-500">
+          <router-link to="/login">Sign in</router-link>
+        </li>
       </ul>
     </div>
   </nav>

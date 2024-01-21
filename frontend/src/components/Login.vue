@@ -20,8 +20,10 @@
       />
       <button class="btn w-full">Sign In</button>
       <div class="label">
-        <span class="label-text-alt">Forget Password</span>
-        <span class="label-text-alt">Sign Up</span>
+        <span class="label-text-alt">Don't have an account yet?</span>
+        <span class="label-text-alt text-white">
+          <router-link to="/register">Sign Up</router-link>
+        </span>
       </div>
     </form>
   </div>
