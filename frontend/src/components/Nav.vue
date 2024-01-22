@@ -1,13 +1,15 @@
 <template>
   <nav class="navbar bg-neutral text-neutral-content">
     <div class="flex-1">
-      <a class="btn btn-ghost text-xl">Library</a>
+      <a class="btn btn-ghost text-xl"
+        ><router-link to="/">Library</router-link></a
+      >
     </div>
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1" v-if="books">
         <li
-          class="bg-slate-700 mx-2 hover:bg-gray-500"
-          @click="handleClickSignOut"
+          class="bg-slate-700 mx-2 hover:bg-gray-500 p-2 cursor-pointer"
+          @click="handleClick"
         >
           Sign out
         </li>
@@ -32,16 +34,8 @@ export default {
   computed: {
     ...mapGetters(["books"]),
   },
-  data() {
-    return {
-      token: null,
-    };
-  },
-  created() {
-    this.token = localStorage.getItem("token");
-  },
   methods: {
-    handleClickSignOut() {
+    handleClick() {
       Swal.fire({
         position: "center",
         icon: "success",

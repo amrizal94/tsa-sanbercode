@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-full">
-    <Nav msg="Selamat datang di perpustakaan" />
-    <div class="flex flex-col justify-start items-center mt-28">
+    <Nav />
+    <div class="flex flex-col justify-start items-center">
       <router-view />
     </div>
   </div>
@@ -15,11 +15,6 @@ export default {
   name: "App",
   components: {
     Nav,
-  },
-  data() {
-    return {
-      books: null,
-    };
   },
   async created() {
     try {

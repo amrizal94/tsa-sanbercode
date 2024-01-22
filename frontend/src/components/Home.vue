@@ -1,6 +1,6 @@
 <template lang="">
   <div>
-    <div role="alert" class="alert alert-error text-lg" v-if="!books">
+    <div role="alert" class="alert alert-error text-4xl mt-28" v-if="!books">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-6 w-6"
@@ -15,61 +15,52 @@
         />
       </svg>
       <span>Please login first.</span>
-      <div>
-        <router-link to="/login">
-          <button class="btn btn-sm btn-primary">OK</button>
-        </router-link>
+      <div class="flex">
+        <button class="btn btn-sm btn-warning" @click="handleClick">OK</button>
       </div>
     </div>
-    <div class="overflow-x-auto" v-if="books">
-      <table class="table">
-        <!-- head -->
-        <thead class="text-lg bg-slate-200">
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Image</th>
-            <th>Release Year</th>
-            <th>Thickness</th>
-            <th>Price</th>
-            <th>Total Page</th>
-            <th>Category</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- row 1 -->
-          <tr v-for="book in books" :key="book.id">
-            <td>{{ book.title }}</td>
-            <td>{{ book.description }}</td>
-            <td>
-              <div class="avatar">
-                <div class="w-24 rounded">
-                  <img v-bind:src="book.image_url" />
-                </div>
-              </div>
-            </td>
-            <td>{{ book.release_year }}</td>
-            <td>{{ book.thickness }}</td>
-            <td>{{ book.price }}</td>
-            <td>{{ book.total_page }}</td>
-            <td>{{ book.category.name }}</td>
-            <td>
-              <v-icon name="co-trash" scale="1.5" class="p-1 box-content" />
-              <v-icon name="px-edit-box" scale="1.5" class="p-1 box-content" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-if="books" class="flex justify-between m-2">
+      <button class="btn btn-success" onclick="my_modal_3.showModal()">
+        Add book
+      </button>
+      <button class="btn btn-success" onclick="my_modal_3.showModal()">
+        Add book
+      </button>
     </div>
+
+    <dialog id="my_modal_3" class="modal">
+      <div class="modal-box">
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
+            ✕
+          </button>
+        </form>
+        <h3 class="font-bold text-lg">Hello!</h3>
+        <p class="py-4">Press ESC key or click on ✕ button to close</p>
+      </div>
+    </dialog>
+    <Card :books="books" />
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
+// import Table from "./Table.vue";
+import Card from "./Card.vue";
 export default {
   name: "Home",
+  components: {
+    // Table,
+    Card,
+  },
   computed: {
     ...mapGetters(["books"]),
+  },
+  methods: {
+    handleClick() {
+      this.$router.push("/login");
+    },
   },
 };
 </script>

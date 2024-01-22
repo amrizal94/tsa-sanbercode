@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="bg-slate-500 w-1/2 p-5 rounded-2xl">
+  <div class="bg-slate-500 w-1/2 p-5 rounded-2xl mt-28">
     <h1 class="text-yellow-50 font-serif text-4xl tracking-wider text-center">
       Sign Up
     </h1>

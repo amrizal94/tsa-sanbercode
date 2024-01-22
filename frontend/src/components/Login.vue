@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="bg-slate-500 w-1/2 p-5 rounded-2xl">
+  <div class="bg-slate-500 w-1/2 p-5 rounded-2xl mt-28">
     <h1 class="text-yellow-50 font-serif text-4xl tracking-wider text-center">
       Sign In
     </h1>
@@ -51,11 +51,12 @@ export default {
           username: this.username,
           password: this.password,
         });
-        localStorage.setItem("token", responseUser.data.token);
+        const token = responseUser.data.token;
+        localStorage.setItem("token", token);
         try {
           const response = await axios.get("books", {
             headers: {
-              Authorization: "Bearer " + responseUser.data.token,
+              Authorization: "Bearer " + token,
             },
           });
           this.$store.dispatch("books", response.data.data.books);
@@ -68,7 +69,6 @@ export default {
           });
           this.$router.push("/");
         } catch (err) {
-          console.log("Error");
           if (err.response.status === 401) {
             delete axios.defaults.headers.common["Authorization"];
             localStorage.removeItem("token");
@@ -86,4 +86,3 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
