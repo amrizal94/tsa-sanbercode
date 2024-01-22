@@ -87,36 +87,7 @@
       </div>
     </div>
     <Modal :isModalOpen="isModalOpen">
-      <form>
-        <h3 className="font-bold text-lg">Add New Book</h3>
-        <div className="modal-action flex flex-col gap-2">
-          <div className="flex flex-col ml-2 gap-2">
-            <input
-              type="text"
-              placeholder="Title"
-              className="input input-bordered"
-            />
-            <input
-              type="text"
-              placeholder="description"
-              className="input input-bordered"
-            />
-          </div>
-          <div className="flex justify-between flex-wrap">
-            <input
-              type="text"
-              placeholder="Release Year"
-              className="input input-bordered"
-            />
-            <input
-              type="text"
-              placeholder="Jumlah"
-              className="input input-bordered"
-            />
-          </div>
-          <button className="btn btn-info" type="submit">Simpan</button>
-        </div>
-      </form>
+      <AddBook />
     </Modal>
     <Card :books="books" />
   </div>
@@ -127,11 +98,13 @@ import Swal from "sweetalert2";
 import { mapGetters } from "vuex";
 import Card from "./Card.vue";
 import Modal from "./Modal.vue";
+import AddBook from "./AddBook.vue";
 export default {
   name: "Home",
   components: {
     Card,
     Modal,
+    AddBook,
   },
   data() {
     return {
@@ -152,7 +125,27 @@ export default {
     handleClick() {
       this.$router.push("/login");
     },
-    showModal() {
+    async showModal() {
+      try {
+        const response = await axios.get("categories");
+        console.log(response.data.data.categories.length);
+        if (response.data.data.categories.length < 0) {
+          Swal.fire({
+            title: "Please add a category",
+            text: "Do you want to continue",
+            icon: "error",
+            confirmButtonText: "Cool",
+          });
+        }
+        this.$store.dispatch("categories", response.data.data.categories);
+      } catch (error) {
+        Swal.fire({
+          title: error.response.data.message,
+          text: "Do you want to continue",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
+      }
       this.$store.dispatch("isModalOpen", true);
     },
     handleCHange(key, value) {
@@ -178,7 +171,6 @@ export default {
           }
         }
       });
-      console.log(useFilter);
       try {
         const response = await axios.get("books" + useFilter, {
           headers: {
