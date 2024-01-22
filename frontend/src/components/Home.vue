@@ -23,9 +23,11 @@
       <button class="btn btn-success" onclick="my_modal_3.showModal()">
         Add book
       </button>
-      <button class="btn btn-success" onclick="my_modal_3.showModal()">
-        Add book
-      </button>
+      <input
+        type="text"
+        placeholder="Type here"
+        class="input input-bordered w-full max-w-xs"
+      />
     </div>
 
     <dialog id="my_modal_3" class="modal">
@@ -46,12 +48,10 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-// import Table from "./Table.vue";
 import Card from "./Card.vue";
 export default {
   name: "Home",
   components: {
-    // Table,
     Card,
   },
   computed: {
