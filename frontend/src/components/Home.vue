@@ -19,47 +19,181 @@
         <button class="btn btn-sm btn-warning" @click="handleClick">OK</button>
       </div>
     </div>
-    <div v-if="books" class="flex justify-between m-2">
-      <button class="btn btn-success" onclick="my_modal_3.showModal()">
-        Add book
-      </button>
-      <input
-        type="text"
-        placeholder="Type here"
-        class="input input-bordered w-full max-w-xs"
-      />
-    </div>
 
-    <dialog id="my_modal_3" class="modal">
-      <div class="modal-box">
-        <form method="dialog">
-          <button
-            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          >
-            ✕
-          </button>
-        </form>
-        <h3 class="font-bold text-lg">Hello!</h3>
-        <p class="py-4">Press ESC key or click on ✕ button to close</p>
+    <div v-if="books" class="flex justify-between m-2">
+      <div>
+        <button class="btn btn-success" @click="showModal">Add book</button>
       </div>
-    </dialog>
+      <div class="flex gap-5">
+        <div data-tip="Sort By Title" class="tooltip">
+          <select
+            @change="handleCHangeSortByTitle"
+            class="select select-bordered w-full max-w-xs"
+            v-model="sortByTitle"
+          >
+            <option selected>Sort By Title</option>
+            <option>Ascending</option>
+            <option>Descending</option>
+          </select>
+        </div>
+        <div data-tip="Title" class="tooltip">
+          <input
+            type="text"
+            placeholder="Title"
+            class="input input-bordered w-full max-w-xs"
+            v-model="title"
+            @change="handleCHange('title', title)"
+          />
+        </div>
+        <div data-tip="Minimum Year" class="tooltip">
+          <input
+            type="text"
+            placeholder="Minimum Year"
+            class="input input-bordered w-full max-w-xs"
+            v-model="minYear"
+            @change="handleCHange('minYear', minYear)"
+          />
+        </div>
+        <div data-tip="Maximum Year" class="tooltip">
+          <input
+            type="text"
+            placeholder="Maximum Year"
+            class="input input-bordered w-full max-w-xs"
+            v-model="maxYear"
+            @change="handleCHange('maxYear', maxYear)"
+          />
+        </div>
+        <div data-tip="Minimum Page" class="tooltip">
+          <input
+            type="text"
+            placeholder="Minimum Page"
+            class="input input-bordered w-full max-w-xs"
+            v-model="minPage"
+            @change="handleCHange('minPage', minPage)"
+          />
+        </div>
+        <div data-tip="Maximum Page" class="tooltip">
+          <input
+            type="text"
+            placeholder="Maximum Page"
+            class="input input-bordered w-full max-w-xs"
+            v-model="maxPage"
+            @change="handleCHange('maxPage', maxPage)"
+          />
+        </div>
+        <button class="btn btn-active btn-ghost" @click="handleClickSearch">
+          Search Book
+        </button>
+      </div>
+    </div>
+    <Modal :isModalOpen="isModalOpen">
+      <form>
+        <h3 className="font-bold text-lg">Add New Book</h3>
+        <div className="modal-action flex flex-col gap-2">
+          <div className="flex flex-col ml-2 gap-2">
+            <input
+              type="text"
+              placeholder="Title"
+              className="input input-bordered"
+            />
+            <input
+              type="text"
+              placeholder="description"
+              className="input input-bordered"
+            />
+          </div>
+          <div className="flex justify-between flex-wrap">
+            <input
+              type="text"
+              placeholder="Release Year"
+              className="input input-bordered"
+            />
+            <input
+              type="text"
+              placeholder="Jumlah"
+              className="input input-bordered"
+            />
+          </div>
+          <button className="btn btn-info" type="submit">Simpan</button>
+        </div>
+      </form>
+    </Modal>
     <Card :books="books" />
   </div>
 </template>
 <script>
+import axios from "axios";
+import Swal from "sweetalert2";
 import { mapGetters } from "vuex";
 import Card from "./Card.vue";
+import Modal from "./Modal.vue";
 export default {
   name: "Home",
   components: {
     Card,
+    Modal,
+  },
+  data() {
+    return {
+      title: null,
+      minYear: null,
+      maxYear: null,
+      minPage: null,
+      maxPage: null,
+      sortByTitle: "Sort By Title",
+
+      filter: {},
+    };
   },
   computed: {
-    ...mapGetters(["books"]),
+    ...mapGetters(["books", "isModalOpen"]),
   },
   methods: {
     handleClick() {
       this.$router.push("/login");
+    },
+    showModal() {
+      this.$store.dispatch("isModalOpen", true);
+    },
+    handleCHange(key, value) {
+      this.filter[key] = value || value !== "" ? value : null;
+    },
+    handleCHangeSortByTitle() {
+      this.filter.sortByTitle =
+        this.sortByTitle === "Ascending"
+          ? "asc"
+          : this.sortByTitle === "Descending"
+          ? "desc"
+          : undefined;
+    },
+    async handleClickSearch() {
+      let useFilter = "";
+      Object.keys(this.filter).forEach((key) => {
+        if (this.filter[key] !== null) {
+          // delete this.filter[key];
+          if (useFilter == "") {
+            useFilter += "?" + key + "=" + this.filter[key];
+          } else {
+            useFilter += "&" + key + "=" + this.filter[key];
+          }
+        }
+      });
+      console.log(useFilter);
+      try {
+        const response = await axios.get("books" + useFilter, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        this.$store.dispatch("books", response.data.data.books);
+      } catch (error) {
+        Swal.fire({
+          title: error.response.data.message,
+          text: "Do you want to continue",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
+      }
     },
   },
 };

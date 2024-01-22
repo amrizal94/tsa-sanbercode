@@ -31,13 +31,10 @@
 </template>
 <script>
 import axios from "axios";
-import { mapGetters } from "vuex";
 import Swal from "sweetalert2";
 export default {
   name: "Login",
-  computed: {
-    ...mapGetters(["books"]),
-  },
+
   data() {
     return {
       username: "",
