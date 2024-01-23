@@ -56,24 +56,77 @@
               name="px-edit-box"
               scale="1.5"
               class="p-1 box-content bg-yellow-600 text-white rounded-lg cursor-pointer hover:bg-black"
+              @click="hanldeClickEdit(book.id)"
             />
           </div>
         </div>
       </div>
     </div>
   </div>
+  <Modal :isModalOpen="isModalOpen">
+    <EditBook :book="book" />
+  </Modal>
 </template>
 <script>
 import axios from "axios";
+import Modal from "./Modal.vue";
+import { mapGetters } from "vuex";
+import EditBook from "./EditBook.vue";
 import Swal from "sweetalert2";
 export default {
   name: "Card",
-  props: ["books"],
+  components: {
+    Modal,
+    EditBook,
+  },
+  data() {
+    return {
+      book: {
+        title: null,
+        description: null,
+        release_year: null,
+        price: null,
+        total_page: null,
+        file: null,
+        category_id: "Category",
+      },
+    };
+  },
+  computed: {
+    ...mapGetters(["books", "isModalOpen"]),
+  },
   methods: {
     imageUrlDefault(e) {
       const baseURL = process.env.VUE_APP_API_HOST;
       const imageUrlDefault = baseURL + "uploads/image-not-found.jpg";
       e.target.src = imageUrlDefault;
+    },
+    async hanldeClickEdit(id) {
+      this.id = id;
+      const index = this.books.findIndex((book) => book.id === id);
+      this.book = this.books[index];
+      this.book.category_id = this.book.category.name;
+      try {
+        const response = await axios.get("categories");
+        if (response.data.data.categories.length < 0) {
+          Swal.fire({
+            title: "Please add a category",
+            text: "Do you want to continue",
+            icon: "error",
+            confirmButtonText: "Cool",
+          });
+        }
+        const categories = response.data.data.categories;
+        this.$store.dispatch("categories", categories);
+      } catch (error) {
+        Swal.fire({
+          title: error.response.data.message,
+          text: "Do you want to continue",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
+      }
+      this.$store.dispatch("isModalOpen", true);
     },
     hanldeClickDelete(id) {
       Swal.fire({
@@ -93,7 +146,6 @@ export default {
               const index = books.findIndex((book) => book.id === id);
               if (index !== -1) {
                 books.splice(index, 1);
-                console.log(res);
                 Swal.fire({
                   position: "top-right",
                   icon: "success",

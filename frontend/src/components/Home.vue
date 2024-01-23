@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div v-if="books" class="flex justify-between m-2">
+    <div v-if="books" class="flex justify-between m-2 gap-5">
       <div class="flex gap-5">
         <button class="btn btn-success" @click="showModal">Add book</button>
         <button class="btn btn-warning" @click="showModalCategory">
