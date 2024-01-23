@@ -21,73 +21,18 @@
     </div>
 
     <div v-if="books" class="flex justify-between m-2">
-      <div>
-        <button class="btn btn-success" @click="showModal">Add book</button>
-      </div>
       <div class="flex gap-5">
-        <div data-tip="Sort By Title" class="tooltip">
-          <select
-            @change="handleCHangeSortByTitle"
-            class="select select-bordered w-full max-w-xs"
-            v-model="sortByTitle"
-          >
-            <option selected>Sort By Title</option>
-            <option>Ascending</option>
-            <option>Descending</option>
-          </select>
-        </div>
-        <div data-tip="Title" class="tooltip">
-          <input
-            type="text"
-            placeholder="Title"
-            class="input input-bordered w-full max-w-xs"
-            v-model="title"
-            @change="handleCHange('title', title)"
-          />
-        </div>
-        <div data-tip="Minimum Year" class="tooltip">
-          <input
-            type="text"
-            placeholder="Minimum Year"
-            class="input input-bordered w-full max-w-xs"
-            v-model="minYear"
-            @change="handleCHange('minYear', minYear)"
-          />
-        </div>
-        <div data-tip="Maximum Year" class="tooltip">
-          <input
-            type="text"
-            placeholder="Maximum Year"
-            class="input input-bordered w-full max-w-xs"
-            v-model="maxYear"
-            @change="handleCHange('maxYear', maxYear)"
-          />
-        </div>
-        <div data-tip="Minimum Page" class="tooltip">
-          <input
-            type="text"
-            placeholder="Minimum Page"
-            class="input input-bordered w-full max-w-xs"
-            v-model="minPage"
-            @change="handleCHange('minPage', minPage)"
-          />
-        </div>
-        <div data-tip="Maximum Page" class="tooltip">
-          <input
-            type="text"
-            placeholder="Maximum Page"
-            class="input input-bordered w-full max-w-xs"
-            v-model="maxPage"
-            @change="handleCHange('maxPage', maxPage)"
-          />
-        </div>
-        <button class="btn btn-active btn-ghost" @click="handleClickSearch">
-          Search Book
+        <button class="btn btn-success" @click="showModal">Add book</button>
+        <button class="btn btn-warning" @click="showModalCategory">
+          Add category
         </button>
       </div>
+
+      <Filtering />
     </div>
     <Modal :isModalOpen="isModalOpen">
-      <AddBook />
+      <AddBook v-if="modal === 'ModalAddBook'" />
+      <AddCategory v-if="modal === 'ModalAddCategory'" />
     </Modal>
     <Card :books="books" />
   </div>
@@ -99,23 +44,20 @@ import { mapGetters } from "vuex";
 import Card from "./Card.vue";
 import Modal from "./Modal.vue";
 import AddBook from "./AddBook.vue";
+import AddCategory from "./AddCategory.vue";
+import Filtering from "./Filtering.vue";
 export default {
   name: "Home",
   components: {
     Card,
     Modal,
     AddBook,
+    AddCategory,
+    Filtering,
   },
   data() {
     return {
-      title: null,
-      minYear: null,
-      maxYear: null,
-      minPage: null,
-      maxPage: null,
-      sortByTitle: "Sort By Title",
-
-      filter: {},
+      modal: "",
     };
   },
   computed: {
@@ -126,9 +68,9 @@ export default {
       this.$router.push("/login");
     },
     async showModal() {
+      this.modal = "ModalAddBook";
       try {
         const response = await axios.get("categories");
-        console.log(response.data.data.categories.length);
         if (response.data.data.categories.length < 0) {
           Swal.fire({
             title: "Please add a category",
@@ -148,39 +90,9 @@ export default {
       }
       this.$store.dispatch("isModalOpen", true);
     },
-    handleCHange(key, value) {
-      this.filter[key] = value || value !== "" ? value : null;
-    },
-    handleCHangeSortByTitle() {
-      this.filter.sortByTitle =
-        this.sortByTitle === "Ascending"
-          ? "asc"
-          : this.sortByTitle === "Descending"
-          ? "desc"
-          : undefined;
-    },
-    async handleClickSearch() {
-      let useFilter = "";
-      Object.keys(this.filter).forEach((key) => {
-        if (this.filter[key] !== null) {
-          if (useFilter == "") {
-            useFilter += "?" + key + "=" + this.filter[key];
-          } else {
-            useFilter += "&" + key + "=" + this.filter[key];
-          }
-        }
-      });
-      try {
-        const response = await axios.get("books" + useFilter);
-        this.$store.dispatch("books", response.data.data.books);
-      } catch (error) {
-        Swal.fire({
-          title: error.response.data.message,
-          text: "Do you want to continue",
-          icon: "error",
-          confirmButtonText: "Cool",
-        });
-      }
+    showModalCategory() {
+      this.modal = "ModalAddCategory";
+      this.$store.dispatch("isModalOpen", true);
     },
   },
 };

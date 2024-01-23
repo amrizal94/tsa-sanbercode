@@ -123,7 +123,7 @@ export default {
           title: error.response.data.message,
           text: "Do you want to continue",
           icon: "error",
-          confirmButtonText: "Cool",
+          confirmButtonText: "Oke",
         });
       }
     },
