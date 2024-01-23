@@ -22,7 +22,6 @@ export default {
       this.$store.dispatch("books", response.data.data.books);
     } catch (err) {
       if (err.response.status === 401) {
-        delete axios.defaults.headers.common["Authorization"];
         localStorage.removeItem("token");
       }
     }

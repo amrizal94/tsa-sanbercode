@@ -163,7 +163,6 @@ export default {
       let useFilter = "";
       Object.keys(this.filter).forEach((key) => {
         if (this.filter[key] !== null) {
-          // delete this.filter[key];
           if (useFilter == "") {
             useFilter += "?" + key + "=" + this.filter[key];
           } else {
@@ -172,11 +171,7 @@ export default {
         }
       });
       try {
-        const response = await axios.get("books" + useFilter, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
+        const response = await axios.get("books" + useFilter);
         this.$store.dispatch("books", response.data.data.books);
       } catch (error) {
         Swal.fire({

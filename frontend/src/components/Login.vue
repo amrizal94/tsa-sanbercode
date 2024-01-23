@@ -51,11 +51,7 @@ export default {
         const token = responseUser.data.token;
         localStorage.setItem("token", token);
         try {
-          const response = await axios.get("books", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          });
+          const response = await axios.get("books");
           this.$store.dispatch("books", response.data.data.books);
           Swal.fire({
             position: "center",
@@ -67,7 +63,6 @@ export default {
           this.$router.push("/");
         } catch (err) {
           if (err.response.status === 401) {
-            delete axios.defaults.headers.common["Authorization"];
             localStorage.removeItem("token");
           }
         }
