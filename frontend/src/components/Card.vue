@@ -15,7 +15,7 @@
         />
       </figure>
       <div class="card-body">
-        <h2 class="card-title">
+        <h2 class="card-title flex justify-between">
           {{ book.title }}
           <div class="badge badge-secondary">{{ book.price }}</div>
         </h2>
@@ -75,7 +75,7 @@ export default {
       const imageUrlDefault = baseURL + "uploads/image-not-found.jpg";
       e.target.src = imageUrlDefault;
     },
-    async hanldeClickDelete(id) {
+    hanldeClickDelete(id) {
       Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -88,36 +88,34 @@ export default {
         if (result.isConfirmed) {
           const response = axios.delete(`books/${id}`);
           response
-            .then(() => {
+            .then((res) => {
               const books = this.books;
               const index = books.findIndex((book) => book.id === id);
               if (index !== -1) {
                 books.splice(index, 1);
+                console.log(res);
+                Swal.fire({
+                  position: "top-right",
+                  icon: "success",
+                  title: "Delete a book",
+                  text: res.data.message,
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                this.$store.dispatch("books", books);
               }
-              this.$store.dispatch("books", books);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Delete a book",
+                text: error.data.message,
+                confirmButtonText: "Oke",
+              });
+            });
         }
       });
-      // try {
-      //   const response = await axios.delete(`books/${id}`);
-      //   Swal.fire({
-      //     position: "top-right",
-      //     icon: "success",
-      //     title: "Delete a book",
-      //     text: response.data.message,
-      //     showConfirmButton: false,
-      //     timer: 1500,
-      //   });
-      // } catch (error) {
-      //   Swal.fire({
-      //     position: "center",
-      //     icon: "error",
-      //     title: "Delete a book",
-      //     text: error.response.data.message,
-      //     confirmButtonText: "Oke",
-      //   });
-      // }
     },
   },
 };

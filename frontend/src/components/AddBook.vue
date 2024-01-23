@@ -8,6 +8,7 @@
           placeholder="Title"
           class="input input-bordered"
           v-model="title"
+          required
         />
         <input
           type="text"
@@ -22,12 +23,14 @@
           placeholder="Release Year"
           class="input input-bordered"
           v-model="release_year"
+          required
         />
         <input
           type="text"
           placeholder="Total Page"
           class="input input-bordered"
           v-model="total_page"
+          required
         />
       </div>
       <div class="flex justify-between gap-10">
@@ -49,6 +52,7 @@
           placeholder="Price"
           class="input input-bordered"
           v-model="price"
+          required
         />
       </div>
       <input
@@ -85,7 +89,9 @@ export default {
     async handleSubmit() {
       const formData = new FormData();
       formData.append("title", this.title);
-      formData.append("description", this.description);
+      if (this.description) {
+        formData.append("description", this.description);
+      }
       formData.append("release_year", this.release_year);
       formData.append("price", this.price);
       formData.append("total_page", this.total_page);
@@ -102,8 +108,8 @@ export default {
         });
         this.$store.dispatch("isModalOpen", false);
         try {
-          const books = await axios.get("books");
-          this.$store.dispatch("books", books);
+          const response = await axios.get("books");
+          this.$store.dispatch("books", response.data.data.books);
         } catch (error) {
           Swal.fire({
             title: error.response.data.message,
