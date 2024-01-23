@@ -31,6 +31,7 @@
 </template>
 <script>
 import axios from "axios";
+import { tokenAuthorization } from "../axios";
 import Swal from "sweetalert2";
 export default {
   name: "Login",
@@ -49,13 +50,9 @@ export default {
           password: this.password,
         });
         const token = responseUser.data.token;
-        localStorage.setItem("token", token);
+        tokenAuthorization(token);
         try {
-          const response = await axios.get("books", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          });
+          const response = await axios.get("books");
           this.$store.dispatch("books", response.data.data.books);
           Swal.fire({
             position: "center",
@@ -67,8 +64,13 @@ export default {
           this.$router.push("/");
         } catch (err) {
           if (err.response.status === 401) {
-            delete axios.defaults.headers.common["Authorization"];
-            localStorage.removeItem("token");
+            Swal.fire({
+              title: err.response.data.message,
+              text: "Do you want to continue",
+              icon: "error",
+              confirmButtonText: "Cool",
+            });
+            tokenAuthorization(null);
           }
         }
       } catch (error) {
@@ -78,6 +80,13 @@ export default {
           icon: "error",
           confirmButtonText: "Cool",
         });
+        const errorMessage = error.response.data.message;
+        if (errorMessage.toLowerCase().includes("password")) {
+          this.password = null;
+        } else {
+          this.username = null;
+          this.password = null;
+        }
       }
     },
   },

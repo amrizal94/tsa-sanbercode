@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { tokenAuthorization } from "../axios";
 import Swal from "sweetalert2";
 import { mapGetters } from "vuex";
 export default {
@@ -37,13 +38,13 @@ export default {
   methods: {
     handleClick() {
       Swal.fire({
-        position: "center",
+        position: "top-right",
         icon: "success",
         title: "Sign out success",
         showConfirmButton: false,
         timer: 1500,
       });
-      localStorage.removeItem("token");
+      tokenAuthorization(null);
       this.$store.dispatch("books", null);
       this.$router.push("/login");
     },

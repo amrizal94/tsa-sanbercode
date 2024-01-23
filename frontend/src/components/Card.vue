@@ -15,7 +15,7 @@
         />
       </figure>
       <div class="card-body">
-        <h2 class="card-title">
+        <h2 class="card-title flex justify-between">
           {{ book.title }}
           <div class="badge badge-secondary">{{ book.price }}</div>
         </h2>
@@ -50,6 +50,7 @@
               name="co-trash"
               scale="1.5"
               class="p-1 box-content bg-red-400 text-white rounded-lg cursor-pointer hover:bg-black"
+              @click="hanldeClickDelete(book.id)"
             />
             <v-icon
               name="px-edit-box"
@@ -63,6 +64,8 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import Swal from "sweetalert2";
 export default {
   name: "Card",
   props: ["books"],
@@ -71,6 +74,48 @@ export default {
       const baseURL = process.env.VUE_APP_API_HOST;
       const imageUrlDefault = baseURL + "uploads/image-not-found.jpg";
       e.target.src = imageUrlDefault;
+    },
+    hanldeClickDelete(id) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const response = axios.delete(`books/${id}`);
+          response
+            .then((res) => {
+              const books = this.books;
+              const index = books.findIndex((book) => book.id === id);
+              if (index !== -1) {
+                books.splice(index, 1);
+                console.log(res);
+                Swal.fire({
+                  position: "top-right",
+                  icon: "success",
+                  title: "Delete a book",
+                  text: res.data.message,
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                this.$store.dispatch("books", books);
+              }
+            })
+            .catch((error) => {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Delete a book",
+                text: error.data.message,
+                confirmButtonText: "Oke",
+              });
+            });
+        }
+      });
     },
   },
 };
