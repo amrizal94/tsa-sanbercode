@@ -101,7 +101,17 @@ export default {
           timer: 1500,
         });
         this.$store.dispatch("isModalOpen", false);
-        location.reload();
+        try {
+          const books = await axios.get("books");
+          this.$store.dispatch("books", books);
+        } catch (error) {
+          Swal.fire({
+            title: error.response.data.message,
+            text: "Session expired, please sign in again",
+            icon: "error",
+            confirmButtonText: "Cool",
+          });
+        }
       } catch (error) {
         Swal.fire({
           title: error.response.data.message,

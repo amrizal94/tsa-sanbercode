@@ -10,7 +10,7 @@
 <script>
 import Nav from "./components/Nav.vue";
 import axios from "axios";
-
+import { tokenAuthorization } from "./axios";
 export default {
   name: "App",
   components: {
@@ -22,7 +22,7 @@ export default {
       this.$store.dispatch("books", response.data.data.books);
     } catch (err) {
       if (err.response.status === 401) {
-        localStorage.removeItem("token");
+        tokenAuthorization(null);
       }
     }
   },
