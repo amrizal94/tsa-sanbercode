@@ -3,6 +3,7 @@
     <div class="modal-box" :class="{ 'max-w-7xl': modal === 'ModalShowImage' }">
       <form method="dialog">
         <button
+          v-if="!modalChildren"
           class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
           @click="closeModal(isModalOpen)"
         >
@@ -18,7 +19,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "Modal",
   computed: {
-    ...mapGetters(["isModalOpen", "modal"]),
+    ...mapGetters(["isModalOpen", "modal", "modalChildren"]),
   },
   methods: {
     closeModal(isModalOpen) {

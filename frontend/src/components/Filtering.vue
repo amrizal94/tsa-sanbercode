@@ -108,7 +108,6 @@ export default {
       this.filter[key] = value || value !== "" ? value : null;
     },
     handleCHangeSortByCategory() {
-      console.log(this.category_id.length);
       const index = this.categories.findIndex(
         (category) => category.id === this.category_id
       );
@@ -137,7 +136,6 @@ export default {
         }
       });
       try {
-        console.log(this.category.id);
         const endpoint =
           this.category_id &&
           this.category_id !== "" &&

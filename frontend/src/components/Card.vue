@@ -248,7 +248,6 @@ export default {
       this.$store.dispatch("isModalOpen", true);
     },
     handleClickImage(imageUrl) {
-      console.log(imageUrl);
       this.$store.dispatch("modal", "ModalShowImage");
       this.imageUrl = imageUrl;
       this.$store.dispatch("isModalOpen", true);

@@ -9,19 +9,24 @@
         v-model="name"
         required
       />
-      <button class="btn" type="submit">Button</button>
+      <button class="btn" type="submit">Save</button>
+      <div class="btn" @click="handleClick(modalChildren)">Cancel</div>
     </div>
   </form>
 </template>
 <script>
 import axios from "axios";
 import Swal from "sweetalert2";
+import { mapGetters } from "vuex";
 export default {
   name: "AddCategory",
   data() {
     return {
       name: null,
     };
+  },
+  computed: {
+    ...mapGetters(["modalChildren"]),
   },
   methods: {
     async handleSubmit() {
@@ -48,6 +53,9 @@ export default {
           confirmButtonText: "Oke",
         });
       }
+    },
+    handleClick(modalChildren) {
+      this.$store.dispatch("modalChildren", !modalChildren);
     },
   },
 };

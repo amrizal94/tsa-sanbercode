@@ -23,8 +23,8 @@
     <div v-if="books" class="flex justify-between m-2 gap-5">
       <div class="flex gap-5">
         <button class="btn btn-success" @click="showModal">Add book</button>
-        <button class="btn btn-warning" @click="showModalCategory">
-          Add category
+        <button class="btn btn-info" @click="showModalCategory">
+          Category
         </button>
       </div>
 
@@ -32,7 +32,7 @@
     </div>
     <Modal :isModalOpen="isModalOpen">
       <AddBook v-if="modal === 'ModalAddBook'" />
-      <AddCategory v-if="modal === 'ModalAddCategory'" />
+      <Category v-if="modal === 'ModalShowCategories'" />
     </Modal>
     <Card :books="books" />
   </div>
@@ -42,7 +42,7 @@ import { mapGetters } from "vuex";
 import Card from "./Card.vue";
 import Modal from "./Modal.vue";
 import AddBook from "./AddBook.vue";
-import AddCategory from "./AddCategory.vue";
+import Category from "./Category.vue";
 import Filtering from "./Filtering.vue";
 export default {
   name: "Home",
@@ -50,8 +50,8 @@ export default {
     Card,
     Modal,
     AddBook,
-    AddCategory,
     Filtering,
+    Category,
   },
   computed: {
     ...mapGetters(["books", "isModalOpen", "modal"]),
@@ -64,8 +64,9 @@ export default {
       this.$store.dispatch("modal", "ModalAddBook");
       this.$store.dispatch("isModalOpen", true);
     },
+
     showModalCategory() {
-      this.$store.dispatch("modal", "ModalAddCategory");
+      this.$store.dispatch("modal", "ModalShowCategories");
       this.$store.dispatch("isModalOpen", true);
     },
   },
