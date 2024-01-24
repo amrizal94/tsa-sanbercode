@@ -63,7 +63,7 @@
       </div>
     </div>
   </div>
-  <Modal :isModalOpen="isModalOpen">
+  <Modal :isModalOpen="isModalOpen" v-if="modal === 'ModalEditBook'">
     <form @submit.prevent="handleSubmit">
       <h3 class="font-bold text-lg">Edit Book</h3>
       <div class="modal-action flex flex-col gap-2">
@@ -161,7 +161,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["books", "isModalOpen", "categories"]),
+    ...mapGetters(["books", "isModalOpen", "categories", "modal"]),
   },
   methods: {
     imageUrlDefault(e) {
@@ -195,6 +195,7 @@ export default {
           showConfirmButton: false,
           timer: 1500,
         });
+        this.$store.dispatch("modal", null);
         this.$store.dispatch("isModalOpen", false);
         try {
           const response = await axios.get("books");
@@ -218,6 +219,7 @@ export default {
       }
     },
     async hanldeClickEdit(id) {
+      this.$store.dispatch("modal", "ModalEditBook");
       this.id = id;
       const index = this.books.findIndex((book) => book.id === id);
       this.book = this.books[index];

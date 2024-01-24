@@ -1,5 +1,14 @@
 <template lang="">
   <form @submit.prevent="handleSubmitFilterBook" class="flex gap-5">
+    <div data-tip="Filter By Category" class="tooltip">
+      <select class="select select-primary w-full max-w-xs">
+        <option disabled selected>Filter By Category</option>
+        <option>Game of Thrones</option>
+        <option>Lost</option>
+        <option>Breaking Bad</option>
+        <option>Walking Dead</option>
+      </select>
+    </div>
     <div data-tip="Sort By Title" class="tooltip">
       <select
         @change="handleCHangeSortByTitle"

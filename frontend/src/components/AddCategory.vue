@@ -37,6 +37,7 @@ export default {
           showConfirmButton: false,
           timer: 1500,
         });
+        this.$store.dispatch("modal", null);
         this.$store.dispatch("isModalOpen", false);
       } catch (error) {
         Swal.fire({

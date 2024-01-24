@@ -55,20 +55,15 @@ export default {
     AddCategory,
     Filtering,
   },
-  data() {
-    return {
-      modal: "",
-    };
-  },
   computed: {
-    ...mapGetters(["books", "isModalOpen"]),
+    ...mapGetters(["books", "isModalOpen", "modal"]),
   },
   methods: {
     handleClick() {
       this.$router.push("/login");
     },
     async showModal() {
-      this.modal = "ModalAddBook";
+      this.$store.dispatch("modal", "ModalAddBook");
       try {
         const response = await axios.get("categories");
         if (response.data.data.categories.length < 0) {
@@ -91,7 +86,7 @@ export default {
       this.$store.dispatch("isModalOpen", true);
     },
     showModalCategory() {
-      this.modal = "ModalAddCategory";
+      this.$store.dispatch("modal", "ModalAddCategory");
       this.$store.dispatch("isModalOpen", true);
     },
   },

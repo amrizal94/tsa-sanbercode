@@ -22,6 +22,7 @@ export default {
   },
   methods: {
     closeModal(isModalOpen) {
+      this.$store.dispatch("modal", null);
       this.$store.dispatch("isModalOpen", !isModalOpen);
     },
   },
