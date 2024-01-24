@@ -127,7 +127,7 @@
         <button class="btn btn-warning" type="submit">Edit</button>
       </div>
     </form>
-    <figure>
+    <figure class="flex justify-center">
       <img
         class="p-5 box-border"
         v-bind:src="imageUrl"
