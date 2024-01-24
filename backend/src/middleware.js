@@ -16,6 +16,12 @@ export const accessToken = (req, res, next) => {
     const jwtDecode = jwt.verify(token, secret);
     req.userData = jwtDecode;
   } catch (error) {
+    if (error.message === "jwt expired") {
+      return res.status(440).json({
+        status: 'fail',
+        message: `Your's session has expired and must log in again.`
+      })
+    }
     return res.status(401).json({
       status: 'fail',
       message: 'Unauthorized',
