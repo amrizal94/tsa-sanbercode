@@ -38,8 +38,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import Swal from "sweetalert2";
 import { mapGetters } from "vuex";
 import Card from "./Card.vue";
 import Modal from "./Modal.vue";
@@ -62,27 +60,8 @@ export default {
     handleClick() {
       this.$router.push("/login");
     },
-    async showModal() {
+    showModal() {
       this.$store.dispatch("modal", "ModalAddBook");
-      try {
-        const response = await axios.get("categories");
-        if (response.data.data.categories.length < 0) {
-          Swal.fire({
-            title: "Please add a category",
-            text: "Do you want to continue",
-            icon: "error",
-            confirmButtonText: "Cool",
-          });
-        }
-        this.$store.dispatch("categories", response.data.data.categories);
-      } catch (error) {
-        Swal.fire({
-          title: error.response.data.message,
-          text: "Do you want to continue",
-          icon: "error",
-          confirmButtonText: "Cool",
-        });
-      }
       this.$store.dispatch("isModalOpen", true);
     },
     showModalCategory() {

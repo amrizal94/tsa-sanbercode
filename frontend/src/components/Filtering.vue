@@ -1,12 +1,18 @@
 <template lang="">
   <form @submit.prevent="handleSubmitFilterBook" class="flex gap-5">
     <div data-tip="Filter By Category" class="tooltip">
-      <select class="select select-primary w-full max-w-xs">
-        <option disabled selected>Filter By Category</option>
-        <option>Game of Thrones</option>
-        <option>Lost</option>
-        <option>Breaking Bad</option>
-        <option>Walking Dead</option>
+      <select
+        class="select select-bordered w-full max-w-xs"
+        v-model="category_id"
+      >
+        <option disabled selected>Category</option>
+        <option
+          v-for="(category, index) in categories"
+          :key="index"
+          :value="category.id"
+        >
+          {{ category.name }}
+        </option>
       </select>
     </div>
     <div data-tip="Sort By Title" class="tooltip">
@@ -71,10 +77,12 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
   name: "Filtering",
   data() {
     return {
+      category_id: "Category",
       title: null,
       minYear: null,
       maxYear: null,
@@ -84,6 +92,10 @@ export default {
 
       filter: {},
     };
+  },
+
+  computed: {
+    ...mapGetters(["categories"]),
   },
   methods: {
     handleCHange(key, value) {

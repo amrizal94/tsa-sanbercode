@@ -224,26 +224,6 @@ export default {
       const index = this.books.findIndex((book) => book.id === id);
       this.book = this.books[index];
       this.category_id = this.book.category.name;
-      try {
-        const response = await axios.get("categories");
-        if (response.data.data.categories.length < 0) {
-          Swal.fire({
-            title: "Please add a category",
-            text: "Do you want to continue",
-            icon: "error",
-            confirmButtonText: "Cool",
-          });
-        }
-        const categories = response.data.data.categories;
-        this.$store.dispatch("categories", categories);
-      } catch (error) {
-        Swal.fire({
-          title: error.response.data.message,
-          text: "Do you want to continue",
-          icon: "error",
-          confirmButtonText: "Cool",
-        });
-      }
       this.$store.dispatch("isModalOpen", true);
     },
     hanldeClickDelete(id) {
