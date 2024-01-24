@@ -113,11 +113,21 @@ export default {
           this.$store.dispatch("books", response.data.data.books);
         } catch (error) {
           Swal.fire({
-            title: error.response.data.message,
-            text: "Session expired, please sign in again",
+            title: "Add a book",
+            text: error.response.data.message,
             icon: "error",
-            confirmButtonText: "Cool",
+            confirmButtonText: "Oke",
           });
+          if (
+            error.response.data.message ===
+            "Your's session has expired and must log in again."
+          ) {
+            localStorage.removeItem("token");
+            this.$store.dispatch("books", null);
+            this.$store.dispatch("isModalOpen", false);
+            this.$store.dispatch("modal", null);
+            this.$router.push("/login");
+          }
         }
       } catch (error) {
         Swal.fire({
