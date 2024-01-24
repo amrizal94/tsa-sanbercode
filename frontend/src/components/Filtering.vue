@@ -6,7 +6,8 @@
         class="select select-bordered w-full max-w-xs"
         v-model="category_id"
       >
-        <option disabled selected>{{ category_id }}</option>
+        <option :value="''" v-if="category_id !== 'Category'">Category</option>
+        <option v-if="category_id !== ''">{{ category_id }}</option>
         <option
           v-for="(category, index) in categories"
           :key="index"
@@ -107,6 +108,7 @@ export default {
       this.filter[key] = value || value !== "" ? value : null;
     },
     handleCHangeSortByCategory() {
+      console.log(this.category_id.length);
       const index = this.categories.findIndex(
         (category) => category.id === this.category_id
       );
@@ -135,9 +137,13 @@ export default {
         }
       });
       try {
-        const endpoint = this.category.id
-          ? `categories/${this.category.id}/books`
-          : "books";
+        console.log(this.category.id);
+        const endpoint =
+          this.category_id &&
+          this.category_id !== "" &&
+          this.category_id !== "Category"
+            ? `categories/${this.category.id}/books`
+            : "books";
         const response = await axios.get(endpoint + useFilter);
         this.$store.dispatch("books", response.data.data.books);
       } catch (error) {
