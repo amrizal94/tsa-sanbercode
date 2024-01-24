@@ -51,6 +51,7 @@ export default {
         });
         const token = responseUser.data.token;
         tokenAuthorization(token);
+        localStorage.setItem("token", token);
         try {
           const response = await axios.get("books");
           this.$store.dispatch("books", response.data.data.books);
@@ -72,6 +73,25 @@ export default {
             });
             tokenAuthorization(null);
           }
+        }
+        try {
+          const response = await axios.get("categories");
+          if (response.data.data.categories.length < 0) {
+            Swal.fire({
+              title: "You don't have any categories",
+              text: "Please add a new category",
+              icon: "warning",
+              confirmButtonText: "Cool",
+            });
+          }
+          this.$store.dispatch("categories", response.data.data.categories);
+        } catch (error) {
+          Swal.fire({
+            title: error.response.data.message,
+            text: "Do you want to continue",
+            icon: "error",
+            confirmButtonText: "Cool",
+          });
         }
       } catch (error) {
         Swal.fire({

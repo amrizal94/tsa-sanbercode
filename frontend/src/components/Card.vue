@@ -5,13 +5,12 @@
       v-for="(book, index) in books"
       :key="index"
     >
-      <figure>
+      <figure @click="handleClickImage(book.image_url)" class="cursor-pointer">
         <img
           v-bind:src="book.image_url"
           @error="imageUrlDefault"
           alt="Book image"
           width="200"
-          height="300"
         />
       </figure>
       <div class="card-body">
@@ -63,8 +62,11 @@
       </div>
     </div>
   </div>
-  <Modal :isModalOpen="isModalOpen">
-    <form @submit.prevent="handleSubmit">
+  <Modal
+    :isModalOpen="isModalOpen"
+    v-if="modal === 'ModalEditBook' || modal === 'ModalShowImage'"
+  >
+    <form @submit.prevent="handleSubmit" v-if="modal === 'ModalEditBook'">
       <h3 class="font-bold text-lg">Edit Book</h3>
       <div class="modal-action flex flex-col gap-2">
         <div class="flex flex-col ml-2 gap-2">
@@ -125,6 +127,15 @@
         <button class="btn btn-warning" type="submit">Edit</button>
       </div>
     </form>
+    <figure class="flex justify-center">
+      <img
+        class="p-5 box-border"
+        v-bind:src="imageUrl"
+        @error="imageUrlDefault"
+        alt="Book image"
+        v-if="modal === 'ModalShowImage'"
+      />
+    </figure>
   </Modal>
 </template>
 <script>
@@ -139,6 +150,7 @@ export default {
   },
   data() {
     return {
+      imageUrl: null,
       title: null,
       description: null,
       release_year: null,
@@ -161,7 +173,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["books", "isModalOpen", "categories"]),
+    ...mapGetters(["books", "isModalOpen", "categories", "modal"]),
   },
   methods: {
     imageUrlDefault(e) {
@@ -195,6 +207,7 @@ export default {
           showConfirmButton: false,
           timer: 1500,
         });
+        this.$store.dispatch("modal", null);
         this.$store.dispatch("isModalOpen", false);
         try {
           const response = await axios.get("books");
@@ -208,40 +221,36 @@ export default {
           });
         }
       } catch (error) {
-        console.log(error);
         Swal.fire({
           title: "Edit a book",
-          text: "Do you want to continue",
+          text: error.response.data.message,
           icon: "error",
           confirmButtonText: "Oke",
         });
+        if (
+          error.response.data.message ===
+          "Your's session has expired and must log in again."
+        ) {
+          localStorage.removeItem("token");
+          this.$store.dispatch("books", null);
+          this.$store.dispatch("isModalOpen", false);
+          this.$store.dispatch("modal", null);
+          this.$router.push("/login");
+        }
       }
     },
-    async hanldeClickEdit(id) {
+    hanldeClickEdit(id) {
+      this.$store.dispatch("modal", "ModalEditBook");
       this.id = id;
       const index = this.books.findIndex((book) => book.id === id);
       this.book = this.books[index];
       this.category_id = this.book.category.name;
-      try {
-        const response = await axios.get("categories");
-        if (response.data.data.categories.length < 0) {
-          Swal.fire({
-            title: "Please add a category",
-            text: "Do you want to continue",
-            icon: "error",
-            confirmButtonText: "Cool",
-          });
-        }
-        const categories = response.data.data.categories;
-        this.$store.dispatch("categories", categories);
-      } catch (error) {
-        Swal.fire({
-          title: error.response.data.message,
-          text: "Do you want to continue",
-          icon: "error",
-          confirmButtonText: "Cool",
-        });
-      }
+      this.$store.dispatch("isModalOpen", true);
+    },
+    handleClickImage(imageUrl) {
+      console.log(imageUrl);
+      this.$store.dispatch("modal", "ModalShowImage");
+      this.imageUrl = imageUrl;
       this.$store.dispatch("isModalOpen", true);
     },
     hanldeClickDelete(id) {

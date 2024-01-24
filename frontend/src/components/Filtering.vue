@@ -1,5 +1,22 @@
 <template lang="">
   <form @submit.prevent="handleSubmitFilterBook" class="flex gap-5">
+    <div data-tip="Filter By Category" class="tooltip">
+      <select
+        @change="handleCHangeSortByCategory"
+        class="select select-bordered w-full max-w-xs"
+        v-model="category_id"
+      >
+        <option :value="''" v-if="category_id !== 'Category'">Category</option>
+        <option v-if="category_id !== ''">{{ category_id }}</option>
+        <option
+          v-for="(category, index) in categories"
+          :key="index"
+          :value="category.id"
+        >
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
     <div data-tip="Sort By Title" class="tooltip">
       <select
         @change="handleCHangeSortByTitle"
@@ -62,10 +79,16 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
   name: "Filtering",
   data() {
     return {
+      category_id: "Category",
+      category: {
+        id: null,
+        name: null,
+      },
       title: null,
       minYear: null,
       maxYear: null,
@@ -76,9 +99,23 @@ export default {
       filter: {},
     };
   },
+
+  computed: {
+    ...mapGetters(["categories"]),
+  },
   methods: {
     handleCHange(key, value) {
       this.filter[key] = value || value !== "" ? value : null;
+    },
+    handleCHangeSortByCategory() {
+      console.log(this.category_id.length);
+      const index = this.categories.findIndex(
+        (category) => category.id === this.category_id
+      );
+      if (index >= 0) {
+        this.category = this.categories[index];
+        this.category_id = this.category.name;
+      }
     },
     handleCHangeSortByTitle() {
       this.filter.sortByTitle =
@@ -100,7 +137,14 @@ export default {
         }
       });
       try {
-        const response = await axios.get("books" + useFilter);
+        console.log(this.category.id);
+        const endpoint =
+          this.category_id &&
+          this.category_id !== "" &&
+          this.category_id !== "Category"
+            ? `categories/${this.category.id}/books`
+            : "books";
+        const response = await axios.get(endpoint + useFilter);
         this.$store.dispatch("books", response.data.data.books);
       } catch (error) {
         Swal.fire({

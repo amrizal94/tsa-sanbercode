@@ -4,7 +4,8 @@ export default createStore({
   state: {
     books: null,
     categories: null,
-    isModalOpen: false
+    isModalOpen: false,
+    modal: null,
   },
   getters: {
     books: (state) => {
@@ -13,7 +14,8 @@ export default createStore({
     categories: (state) => {
       return state.categories
     },
-    isModalOpen: (state) => state.isModalOpen
+    isModalOpen: (state) => state.isModalOpen,
+    modal: (state) => state.modal
   },
   mutations: {
     books(state, books) {
@@ -22,7 +24,8 @@ export default createStore({
     categories(state, categories) {
       state.categories = categories
     },
-    isModalOpen: (state, isModalOpen) => state.isModalOpen = isModalOpen
+    isModalOpen: (state, isModalOpen) => state.isModalOpen = isModalOpen,
+    modal: (state, modal) => state.modal = modal
   },
   actions: {
     books(context, books) {
@@ -31,7 +34,8 @@ export default createStore({
     categories(context, categories) {
       context.commit('categories', categories)
     },
-    isModalOpen(context, isModalOpen) { context.commit('isModalOpen', isModalOpen) }
+    isModalOpen(context, isModalOpen) { context.commit('isModalOpen', isModalOpen) },
+    modal(context, modal) { context.commit('modal', modal) }
   },
   modules: {
   }

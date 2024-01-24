@@ -45,6 +45,7 @@ export default {
         timer: 1500,
       });
       tokenAuthorization(null);
+      localStorage.removeItem("token");
       this.$store.dispatch("books", null);
       this.$router.push("/login");
     },
