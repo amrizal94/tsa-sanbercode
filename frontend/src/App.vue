@@ -22,11 +22,7 @@ export default {
       try {
         const response = await axios.get(endpoint);
         const data = response.data.data[endpoint];
-
         this.$store.dispatch(endpoint, data);
-        if (endpoint === "categories" && data.length < 0) {
-          return "You don't have any categories";
-        }
       } catch (error) {
         return error.response.data.message;
       }
@@ -56,8 +52,8 @@ export default {
         this.getAPI("categories").then((errorMessage) => {
           if (errorMessage) {
             Swal.fire({
-              title: "You don't have any categories",
-              text: "Please add a new category",
+              title: "Authentication",
+              text: errorMessage,
               icon: "warning",
               confirmButtonText: "Cool",
             });

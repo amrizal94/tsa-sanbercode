@@ -2,10 +2,11 @@
   <form @submit.prevent="handleSubmitFilterBook" class="flex gap-5">
     <div data-tip="Filter By Category" class="tooltip">
       <select
+        @change="handleCHangeSortByCategory"
         class="select select-bordered w-full max-w-xs"
         v-model="category_id"
       >
-        <option disabled selected>Category</option>
+        <option disabled selected>{{ category_id }}</option>
         <option
           v-for="(category, index) in categories"
           :key="index"
@@ -83,6 +84,10 @@ export default {
   data() {
     return {
       category_id: "Category",
+      category: {
+        id: null,
+        name: null,
+      },
       title: null,
       minYear: null,
       maxYear: null,
@@ -101,8 +106,16 @@ export default {
     handleCHange(key, value) {
       this.filter[key] = value || value !== "" ? value : null;
     },
+    handleCHangeSortByCategory() {
+      const index = this.categories.findIndex(
+        (category) => category.id === this.category_id
+      );
+      if (index >= 0) {
+        this.category = this.categories[index];
+        this.category_id = this.category.name;
+      }
+    },
     handleCHangeSortByTitle() {
-      console.log(this.category_id);
       this.filter.sortByTitle =
         this.sortByTitle === "Ascending"
           ? "asc"
@@ -122,7 +135,10 @@ export default {
         }
       });
       try {
-        const response = await axios.get("books" + useFilter);
+        const endpoint = this.category.id
+          ? `categories/${this.category.id}/books`
+          : "books";
+        const response = await axios.get(endpoint + useFilter);
         this.$store.dispatch("books", response.data.data.books);
       } catch (error) {
         Swal.fire({

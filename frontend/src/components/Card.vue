@@ -221,13 +221,22 @@ export default {
           });
         }
       } catch (error) {
-        console.log(error);
         Swal.fire({
           title: "Edit a book",
-          text: "Do you want to continue",
+          text: error.response.data.message,
           icon: "error",
           confirmButtonText: "Oke",
         });
+        if (
+          error.response.data.message ===
+          "Your's session has expired and must log in again."
+        ) {
+          localStorage.removeItem("token");
+          this.$store.dispatch("books", null);
+          this.$store.dispatch("isModalOpen", false);
+          this.$store.dispatch("modal", null);
+          this.$router.push("/login");
+        }
       }
     },
     hanldeClickEdit(id) {
