@@ -102,6 +102,7 @@ export default {
       this.filter[key] = value || value !== "" ? value : null;
     },
     handleCHangeSortByTitle() {
+      console.log(this.category_id);
       this.filter.sortByTitle =
         this.sortByTitle === "Ascending"
           ? "asc"

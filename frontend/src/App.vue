@@ -18,26 +18,47 @@ export default {
     Nav,
   },
   methods: {
-    async getBooks() {
+    async getAPI(endpoint) {
       try {
-        const response = await axios.get("books");
-        this.$store.dispatch("books", response.data.data.books);
+        const response = await axios.get(endpoint);
+        const data = response.data.data[endpoint];
+
+        this.$store.dispatch(endpoint, data);
+        if (endpoint === "categories" && data.length < 0) {
+          return "You don't have any categories";
+        }
       } catch (error) {
         return error.response.data.message;
       }
     },
   },
   created() {
-    this.getBooks().then((errorMessage) => {
+    this.getAPI("books").then((errorMessage) => {
       if (errorMessage === "Token diperlukan") {
         const token = localStorage.getItem("token");
         if (token) tokenAuthorization(token);
-        this.getBooks().then((errorMessage) => {
+        this.getAPI("books").then((errorMessage) => {
           if (errorMessage) {
             Swal.fire({
               title: "Authentication",
               text: errorMessage,
               icon: "error",
+              confirmButtonText: "Cool",
+            });
+          }
+        });
+      }
+    });
+    this.getAPI("categories").then((errorMessage) => {
+      if (errorMessage === "Token diperlukan") {
+        const token = localStorage.getItem("token");
+        if (token) tokenAuthorization(token);
+        this.getAPI("categories").then((errorMessage) => {
+          if (errorMessage) {
+            Swal.fire({
+              title: "You don't have any categories",
+              text: "Please add a new category",
+              icon: "warning",
               confirmButtonText: "Cool",
             });
           }
