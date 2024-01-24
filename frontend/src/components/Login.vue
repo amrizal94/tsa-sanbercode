@@ -51,6 +51,7 @@ export default {
         });
         const token = responseUser.data.token;
         tokenAuthorization(token);
+        localStorage.setItem("token", token);
         try {
           const response = await axios.get("books");
           this.$store.dispatch("books", response.data.data.books);

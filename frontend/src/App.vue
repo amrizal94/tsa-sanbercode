@@ -11,20 +11,39 @@
 import Nav from "./components/Nav.vue";
 import axios from "axios";
 import { tokenAuthorization } from "./axios";
+import Swal from "sweetalert2";
 export default {
   name: "App",
   components: {
     Nav,
   },
-  async created() {
-    try {
-      const response = await axios.get("books");
-      this.$store.dispatch("books", response.data.data.books);
-    } catch (err) {
-      if (err.response.status === 401) {
-        tokenAuthorization(null);
+  methods: {
+    async getBooks() {
+      try {
+        const response = await axios.get("books");
+        this.$store.dispatch("books", response.data.data.books);
+      } catch (error) {
+        return error.response.data.message;
       }
-    }
+    },
+  },
+  created() {
+    this.getBooks().then((errorMessage) => {
+      if (errorMessage === "Token diperlukan") {
+        const token = localStorage.getItem("token");
+        if (token) tokenAuthorization(token);
+        this.getBooks().then((errorMessage) => {
+          if (errorMessage) {
+            Swal.fire({
+              title: "Authentication",
+              text: errorMessage,
+              icon: "error",
+              confirmButtonText: "Cool",
+            });
+          }
+        });
+      }
+    });
   },
 };
 </script>
