@@ -40,6 +40,8 @@
 import { mapGetters } from "vuex";
 import Modal from "./Modal.vue";
 import AddCategory from "./AddCategory.vue";
+import axios from "axios";
+import Swal from "sweetalert2";
 export default {
   name: "Category",
   data() {
@@ -60,7 +62,47 @@ export default {
       this.$store.dispatch("modalChildren", true);
     },
     hanldeClickDelete(id) {
-      console.log(id);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const response = axios.delete(`categories/${id}`);
+          response
+            .then((res) => {
+              const categories = this.categories;
+              const index = categories.findIndex(
+                (category) => category.id === id
+              );
+              if (index !== -1) {
+                categories.splice(index, 1);
+                Swal.fire({
+                  position: "top-right",
+                  icon: "success",
+                  title: "Delete a category",
+                  text: res.data.message,
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                this.$store.dispatch("categories", categories);
+              }
+            })
+            .catch((error) => {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Delete a category",
+                text: error.data.message,
+                confirmButtonText: "Oke",
+              });
+            });
+        }
+      });
     },
     hanldeClickEdit(id) {
       console.log(id);
