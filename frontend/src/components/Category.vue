@@ -34,6 +34,32 @@
     <Modal v-if="modalChildren" :modalChildren="modalChildren">
       <AddCategory />
     </Modal>
+    <!-- You can open the modal using ID.showModal() method -->
+    <dialog class="modal" :class="{ 'modal-open': isModalOpen }">
+      <div class="modal-box">
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            @click="closeModal(isModalOpen)"
+          >
+            ✕
+          </button>
+        </form>
+        <form class="flex flex-col gap-5" @submit.prevent="handleSubmit">
+          <h3 class="font-bold text-lg">Edit Category</h3>
+          <div class="flex gap-5">
+            <input
+              type="text"
+              placeholder="Categoy Name"
+              class="input input-bordered w-11/12"
+              v-model="name"
+              required
+            />
+            <button class="btn btn-warning" type="submit">Edit</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
   </div>
 </template>
 <script>
@@ -46,7 +72,9 @@ export default {
   name: "Category",
   data() {
     return {
-      modal: null,
+      isModalOpen: false,
+      id: null,
+      name: null,
     };
   },
   computed: {
@@ -57,6 +85,27 @@ export default {
     AddCategory,
   },
   methods: {
+    async getCategories() {
+      try {
+        const response = await axios.get("categories");
+        if (response.data.data.categories.length < 0) {
+          Swal.fire({
+            title: "You don't have any categories",
+            text: "Please add a new category",
+            icon: "warning",
+            confirmButtonText: "Cool",
+          });
+        }
+        this.$store.dispatch("categories", response.data.data.categories);
+      } catch (error) {
+        Swal.fire({
+          title: error.response.data.message,
+          text: "Do you want to continue",
+          icon: "error",
+          confirmButtonText: "Cool",
+        });
+      }
+    },
     showModalAddCategory() {
       this.modal = "ModalAddCategory";
       this.$store.dispatch("modalChildren", true);
@@ -89,7 +138,7 @@ export default {
                   showConfirmButton: false,
                   timer: 1500,
                 });
-                this.$store.dispatch("categories", categories);
+                this.getCategories();
               }
             })
             .catch((error) => {
@@ -105,7 +154,45 @@ export default {
       });
     },
     hanldeClickEdit(id) {
-      console.log(id);
+      this.isModalOpen = true;
+      this.id = id;
+    },
+    async handleSubmit() {
+      try {
+        const response = await axios.patch(`categories/${this.id}`, {
+          name: this.name,
+        });
+        Swal.fire({
+          position: "top-right",
+          icon: "success",
+          title: response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        this.getCategories();
+        this.isModalOpen = false;
+      } catch (error) {
+        Swal.fire({
+          title: "Edit a Category",
+          text: error.response.data.message,
+          icon: "error",
+          confirmButtonText: "Oke",
+        });
+        if (
+          error.response.data.message ===
+          "Your's session has expired and must log in again."
+        ) {
+          this.isModalOpen = false;
+          localStorage.removeItem("token");
+          this.$store.dispatch("books", null);
+          this.$store.dispatch("isModalOpen", false);
+          this.$store.dispatch("modal", null);
+          this.$router.push("/login");
+        }
+      }
+    },
+    closeModal(isModalOpen) {
+      this.isModalOpen = !isModalOpen;
     },
   },
 };
