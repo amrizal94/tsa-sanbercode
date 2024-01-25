@@ -42,8 +42,18 @@ export default {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.$store.dispatch("modal", null);
-        this.$store.dispatch("isModalOpen", false);
+        try {
+          const response = await axios.get("categories");
+          this.$store.dispatch("categories", response.data.data.categories);
+        } catch (error) {
+          Swal.fire({
+            title: error.response.data.message,
+            text: "Do you want to continue",
+            icon: "error",
+            confirmButtonText: "Cool",
+          });
+        }
+        this.$store.dispatch("modalChildren", false);
       } catch (error) {
         Swal.fire({
           position: "center",
