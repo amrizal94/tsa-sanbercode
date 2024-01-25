@@ -4,7 +4,7 @@
     <div class="flex gap-5">
       <input
         type="text"
-        placeholder="Name of the new category"
+        placeholder="Categoy Name"
         class="input input-bordered w-full max-w-xs"
         v-model="name"
         required
@@ -58,10 +58,21 @@ export default {
         Swal.fire({
           position: "center",
           icon: "error",
-          title: "Add Category",
+          title: "Failed to add category",
           text: error.response.data.message,
           confirmButtonText: "Oke",
         });
+        if (
+          error.response.data.message ===
+          "Your's session has expired and must log in again."
+        ) {
+          localStorage.removeItem("token");
+          this.$store.dispatch("books", null);
+          this.$store.dispatch("isModalOpen", false);
+          this.$store.dispatch("modalChildren", false);
+          this.$store.dispatch("modal", null);
+          this.$router.push("/login");
+        }
       }
     },
     handleClick(modalChildren) {
