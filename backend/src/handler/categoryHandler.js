@@ -15,7 +15,18 @@ export const addCategory = async (req, res) => {
     return res;
   }
   try {
-    await prisma.category.create({ data: { name } });
+    await prisma.category.upsert({
+      where: {
+        deleted: true,
+        name
+      },
+      update: {
+        deleted: false
+      },
+      create: {
+        name
+      },
+    })
     res.status(200).json({
       status: 'success',
       message: 'Category berhasil ditambahkan'
